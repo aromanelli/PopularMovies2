@@ -5,9 +5,10 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+
+import info.romanelli.udacity.android.popularmovies.util.MovieInfoFetcher;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -88,10 +89,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // TODO AOR Remove below, put in right place!
-        // https://medium.com/code-better/hiding-api-keys-from-your-android-repository-b23f5598b906
-        String apiKeyTMDb = BuildConfig.ApiKey_TheMovieDB;
-        Log.d(getClass().getSimpleName(), "API Key - TheMovieDB: " + apiKeyTMDb);
+        //////////////////////////////////////////////////////////////////////
+        MovieInfoFetcher.fetchPopularMovies(this); // TODO AOR Remove below, put in right place!
+        MovieInfoFetcher.fetchTopRatedMovies(this); // TODO AOR Remove below, put in right place!
+        //////////////////////////////////////////////////////////////////////
 
         setContentView(R.layout.activity_main);
 
