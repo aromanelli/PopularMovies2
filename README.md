@@ -14,4 +14,9 @@ The entry in the gradle.properties file should look like this ...
 
 Without specifying the api key value, the app will not work!
 
-See https://medium.com/code-better/hiding-api-keys-from-your-android-repository-b23f5598b906 for the technical details of why this needs to be done.
+See ...
+
+    https://medium.com/code-better/hiding-api-keys-from-your-android-repository-b23f5598b906
+    https://stackoverflow.com/a/34021467/435519   (option #2)
+
+...  for the technical details of why this needs to be done.
