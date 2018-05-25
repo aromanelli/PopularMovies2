@@ -22,8 +22,8 @@ android {
         }
         release {
             // https://medium.com/code-better/hiding-api-keys-from-your-android-repository-b23f5598b906
-            // https://richardroseblog.wordpress.com/2016/05/29/hiding-secret-api-keys-from-git/
-            // https://stackoverflow.com/questions/33134031/is-there-a-safe-way-to-manage-api-keys
+            // https://stackoverflow.com/a/34021467/435519 (option #2)
+            //    https://stackoverflow.com/questions/33134031/is-there-a-safe-way-to-manage-api-keys
             // For Java ...
             buildConfigField 'String', "ApiKey_TheMovieDB", ApiKey_TheMovieDB
             // For non-Java (layouts, resources, etc.) ...
