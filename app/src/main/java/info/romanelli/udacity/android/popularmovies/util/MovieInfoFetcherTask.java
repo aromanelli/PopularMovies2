@@ -61,15 +61,23 @@ public class MovieInfoFetcherTask
 
     @Override
     protected List<MovieInfo> doInBackground(MovieInfoFetcherTask.MoviesListType... moviesType) {
-        Log.d(TAG, "doInBackground() called with: movieType = [" + moviesType[0] + "]");
+
+        if ((moviesType == null) || (moviesType.length == 0)) {
+            Log.w(TAG, "doInBackground: No movies list type was specified; aborting!");
+            return Collections.emptyList();
+        }
+        else {
+            Log.d(TAG, "doInBackground() called with: movieType = [" + moviesType[0] + "]");
+        }
+
         try {
-            // TODO AOR Code fetching all pages of list, not just first one!
-            return parseJSONPage( getResponse( buildURL(moviesType[0]) ) );
+            return parseJSON( getResponse( buildURL(moviesType[0]) ) );
         } catch (MalformedURLException e) {
             Log.e(TAG, "doInBackground: Error while building URL to fetch movies data!", e);
         } catch (IOException e) {
             Log.e(TAG, "doInBackground: Error while fetching movies data!", e);
         }
+
         return null;
     }
 
@@ -108,9 +116,11 @@ public class MovieInfoFetcherTask
     }
 
     // See project sandwich-club-starter-code, classes Jsonutils, strings.xml, and Sandwich
-    private List<MovieInfo> parseJSONPage(final String jsonPage) {
+    // TODO AOR Code fetching all pages of list, not just first one!
+    // TODO AOR Use page requesting specific URL, not generic link.
+    private List<MovieInfo> parseJSON(final String json) {
         try {
-            final JSONObject jsonObjMoviePage = new JSONObject(jsonPage);
+            final JSONObject jsonObjMoviePage = new JSONObject(json);
             // final int page = jsonObjMoviePage.getInt("page");
             // final int totalResults = jsonObjMoviePage.getInt("total_results");
             // final int totalPages = jsonObjMoviePage.getInt("total_pages");

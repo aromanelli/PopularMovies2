@@ -28,8 +28,10 @@ public class MovieInfoFetcher {
         Log.d(TAG, "fetchMoviesData() called with: context = [" + context +
                 "], moviesListType = [" + moviesListType + "]");
         if (isOnline(context)) {
-            Log.d(TAG, "fetchMoviesData(): Online; starting AsyncTask ...");
+            Log.d(TAG, "fetchMoviesData(): Online; starting AsyncTask for list type ["+ moviesListType +"] ...");
             new MovieInfoFetcherTask().execute(moviesListType);
+        } else {
+            Log.w(TAG, "fetchMoviesData: Not online, so cannot do fetching; aborting!");
         }
     }
 
@@ -45,7 +47,7 @@ public class MovieInfoFetcher {
             Log.w(TAG, "isOnline: Unable to obtain a ConnectivityManager reference!");
             flag = false;
         }
-        Log.i(TAG, "isOnline: Online? " + flag);
+        Log.d(TAG, "isOnline: Online? " + flag);
         return flag;
     }
 
