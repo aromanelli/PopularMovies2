@@ -1,5 +1,6 @@
 package info.romanelli.udacity.android.popularmovies.util;
 
+import android.content.Context;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
@@ -24,24 +25,21 @@ import info.romanelli.udacity.android.popularmovies.model.MovieInfo;
  * <p>An {@link AsyncTask} that will make JSON calls to TMDB and return a {@link List}
  * of {@link MovieInfo} objects.</p>
  *
- * <p>Use "{@code new MovieInfoFetcherTask().execute(MoviesListType)}" to run this task,
- * being sure to pass in what kind of list you want, {@link MoviesListType#POPULAR} or
+ * <p>Use "{@code new MovieInfoFetcherTask().execute(}{@link MoviesListType}{@code , }
+ * {@link MovieInfoFetchedListener}{@code )}" to run this task, being sure to pass
+ * in what kind of {@link MoviesListType} you want, {@link MoviesListType#POPULAR} or
  * '{@link MoviesListType#TOP_RATED}'.</p>
  */
-public class MovieInfoFetcherTask
-        extends AsyncTask<MovieInfoFetcherTask.MoviesListType, Integer, List<MovieInfo>> {
+public class MovieInfoFetcherTask extends AsyncTask<Object, Integer, ArrayList<MovieInfo>> {
+    // Returned arg has to be ArrayList and not List because Bundle.putParcelableArrayList
 
     final static private String TAG = MovieInfoFetcherTask.class.getSimpleName();
-
-    final static private String URL_TMDB_MOVIES_BASE = "https://api.themoviedb.org/3/movie";
 
     final static private String API_KEY_PARAM_NAME = "api_key";
     // https://medium.com/code-better/hiding-api-keys-from-your-android-repository-b23f5598b906
     // https://stackoverflow.com/a/34021467/435519 (option #2)
     //    https://stackoverflow.com/questions/33134031/is-there-a-safe-way-to-manage-api-keys
     final static private String API_KEY_TMDB = BuildConfig.ApiKey_TheMovieDB;
-
-    // final static private String URL_TMDB_IMAGES = "http://image.tmdb.org/t/p/";
 
     public enum MoviesListType {
 
@@ -59,19 +57,41 @@ public class MovieInfoFetcherTask
         }
     }
 
-    @Override
-    protected List<MovieInfo> doInBackground(MovieInfoFetcherTask.MoviesListType... moviesType) {
+    // https://stackoverflow.com/questions/12575068/how-to-get-the-result-of-onpostexecute-to-main-activity-because-asynctask-is-a
+    private MovieInfoFetchedListener listener;
+    public interface MovieInfoFetchedListener {
+        void fetched(ArrayList<MovieInfo> listMovieInfo);
+    }
 
-        if ((moviesType == null) || (moviesType.length == 0)) {
-            Log.w(TAG, "doInBackground: No movies list type was specified; aborting!");
-            return Collections.emptyList();
+    @Override
+    protected ArrayList<MovieInfo> doInBackground( Object... arguments ) {
+
+        // Assign the passed in arguments, error if not passed in ...
+        MovieInfoFetcherTask.MoviesListType moviesType = null;
+        for (Object arg : arguments) {
+            if (arg instanceof MovieInfoFetcherTask.MoviesListType) {
+                // We'll just allow last one in, in case dev passes more than one
+                moviesType = (MoviesListType) arg;
+                Log.d(TAG, "doInBackground() called with: movieType = [" + moviesType + "]");
+            } else if (arg instanceof MovieInfoFetchedListener) {
+                // We'll just allow last one in, in case dev passes more than one
+                listener = (MovieInfoFetchedListener) arg;
+            }
         }
-        else {
-            Log.d(TAG, "doInBackground() called with: movieType = [" + moviesType[0] + "]");
+
+        // Verify we have valid arguments ...
+        if (moviesType == null) {
+            Log.e(TAG, "doInBackground: A valid Movies Type must be supplied!" );
+            throw new IllegalArgumentException("A valid Movies Type must be supplied!");
         }
+        if (listener == null) {
+            Log.e(TAG, "doInBackground: A valid results listener must be supplied!" );
+            throw new IllegalArgumentException("A valid results listener must be supplied!");
+        }
+
 
         try {
-            return parseJSON( getResponse( buildURL(moviesType[0]) ) );
+            return parseJSON( getResponse( buildURL(moviesType) ) );
         } catch (MalformedURLException e) {
             Log.e(TAG, "doInBackground: Error while building URL to fetch movies data!", e);
         } catch (IOException e) {
@@ -106,9 +126,9 @@ public class MovieInfoFetcherTask
             return null;
         }
         // Assemble and build the Uri ...
-        Uri uri = Uri.parse(URL_TMDB_MOVIES_BASE)
+        Uri uri = Uri.parse("https://api.themoviedb.org/3/movie")
                 .buildUpon()
-                .appendPath(moviesListType.getURLForType())
+                .appendEncodedPath(moviesListType.getURLForType())
                 .appendQueryParameter(API_KEY_PARAM_NAME, API_KEY_TMDB)
                 .build();
         // Create the URL from the Uri ...
@@ -118,7 +138,7 @@ public class MovieInfoFetcherTask
     // See project sandwich-club-starter-code, classes Jsonutils, strings.xml, and Sandwich
     // TODO AOR Code fetching all pages of list, not just first one!
     // TODO AOR Use page requesting specific URL, not generic link.
-    private List<MovieInfo> parseJSON(final String json) {
+    private ArrayList<MovieInfo> parseJSON(final String json) {
         try {
             final JSONObject jsonObjMoviePage = new JSONObject(json);
             // final int page = jsonObjMoviePage.getInt("page");
@@ -127,7 +147,7 @@ public class MovieInfoFetcherTask
 
             final JSONArray jsonArrResults = jsonObjMoviePage.getJSONArray("results");
 
-            final List<MovieInfo> listMovies = new ArrayList<>(); // totalResults);
+            final ArrayList<MovieInfo> listMovies = new ArrayList<>(); // totalResults);
             for (int i = 0; i < jsonArrResults.length(); i++) {
                 JSONObject jsonObjMovieInfo = new JSONObject(jsonArrResults.getString(i));
                 listMovies.add(
@@ -143,7 +163,7 @@ public class MovieInfoFetcherTask
             return listMovies;
         } catch (JSONException e) {
             Log.e(TAG, "parseJson: " + e.getLocalizedMessage(), e);
-            return Collections.emptyList();
+            return new ArrayList<>(0);
         }
 
     }
@@ -154,7 +174,8 @@ public class MovieInfoFetcherTask
     }
 
     @Override
-    protected void onPostExecute(List<MovieInfo> listMovies) {
+    protected void onPostExecute(ArrayList<MovieInfo> listMovies) {
         Log.d(TAG, "onPostExecute() called with: listMovies = [" + listMovies + "]");
+        listener.fetched(listMovies);
     }
 }
