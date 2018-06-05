@@ -8,14 +8,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
-import info.romanelli.udacity.android.popularmovies.MainActivity;
 import info.romanelli.udacity.android.popularmovies.R;
 
 public class MovieInfoAdapter extends RecyclerView.Adapter<MovieInfoAdapter.MovieInfoViewHolder> {
@@ -23,16 +21,13 @@ public class MovieInfoAdapter extends RecyclerView.Adapter<MovieInfoAdapter.Movi
     final static private String TAG = MovieInfoAdapter.class.getSimpleName();
 
     private List<MovieInfo> listMovieInfo;
-    final private Context context;
     final private MovieInfoAdapterOnClickHandler clickHandler;
 
     public interface MovieInfoAdapterOnClickHandler {
         void onClick(final MovieInfo mi);
     }
 
-    public MovieInfoAdapter(final Context context,
-                            final MovieInfoAdapterOnClickHandler clickHander ) {
-        this.context = context;
+    public MovieInfoAdapter(final MovieInfoAdapterOnClickHandler clickHander ) {
         this.clickHandler = clickHander;
     }
 
@@ -61,14 +56,11 @@ public class MovieInfoAdapter extends RecyclerView.Adapter<MovieInfoAdapter.Movi
 //        Log.d(TAG, "onCreate: DisplayMetrics: " + metrics);
         final Uri uri = Uri.parse("http://image.tmdb.org/t/p/")
                 .buildUpon()
-                .appendEncodedPath("w342")
+                .appendEncodedPath("w185")
                 .appendEncodedPath(listMovieInfo.get(position).getPosterURL())
                 .build();
         Log.d(TAG, "onBindViewHolder: Uri for poster: ["+ uri +"]");
-        new Picasso.Builder(context)
-                .build()
-                .load(uri)
-                .into(holder.ivMoviePoster);
+        Picasso.get().load(uri).into(holder.ivMoviePoster);
     }
 
     @Override
