@@ -1,6 +1,9 @@
 <resources>
     <string name="app_name">Popular Movies</string>
 
+    <string name="menu_top_rated">Top Rated</string>
+    <string name="menu_popular">Popular</string>
+
     <string name="movie_poster_image">Movie Poster</string>
 
     <string name="dummy_button">Dummy Button</string>

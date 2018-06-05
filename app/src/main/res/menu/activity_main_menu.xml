@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/menu_top_rated"
+        android:title="@string/menu_top_rated"
+        android:orderInCategory="1"/> <!-- Needed for MainActivity.onPrepareOptionsMenu(Menu) -->
+    <item
+        android:id="@+id/menu_popular"
+        android:title="@string/menu_popular"
+        android:orderInCategory="2"/> <!-- Needed for MainActivity.onPrepareOptionsMenu(Menu) -->
+</menu>

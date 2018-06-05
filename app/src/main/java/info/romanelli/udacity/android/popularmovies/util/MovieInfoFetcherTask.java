@@ -1,6 +1,5 @@
 package info.romanelli.udacity.android.popularmovies.util;
 
-import android.content.Context;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
@@ -14,7 +13,6 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
 

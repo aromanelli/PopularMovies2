@@ -1,20 +1,15 @@
 package info.romanelli.udacity.android.popularmovies;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.os.Handler;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.DisplayMetrics;
-import android.util.Log;
-import android.view.MotionEvent;
-import android.view.View;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import info.romanelli.udacity.android.popularmovies.model.MovieInfo;
 import info.romanelli.udacity.android.popularmovies.model.MovieInfoAdapter;
@@ -36,11 +31,14 @@ public class MainActivity
     final static private String KEY_BUNDLE_MOVIEINFO = "KEY_BUNDLE_MOVIEINFO";
 
     private RecyclerView mContentView;
-    private View mControlsView;
 
     private MovieInfoAdapter mAdapterMovieInfo;
 
-    private ArrayList<MovieInfo> listMovieInfo; // Bundle.putParcelableArrayList requires ArrayList
+    // Bundle.putParcelableArrayList requires ArrayList
+    private ArrayList<MovieInfo> listMovieInfo;
+
+    private MovieInfoFetcherTask.MoviesListType typeMoviesList =
+        MovieInfoFetcherTask.MoviesListType.POPULAR;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,19 +47,23 @@ public class MainActivity
 
         setContentView(R.layout.activity_main);
 
-        mVisible = true;
-        mControlsView = findViewById(R.id.fullscreen_content_controls);
         mContentView = findViewById(R.id.fullscreen_content);
 
         mContentView.setLayoutManager(new GridLayoutManager(this, 2));
         mContentView.hasFixedSize();
 
-        mAdapterMovieInfo = new MovieInfoAdapter(this, this);
+        mAdapterMovieInfo = new MovieInfoAdapter(this);
         mContentView.setAdapter(mAdapterMovieInfo);
+
+        fetchMovieData(savedInstanceState);
+    }
+
+    private void fetchMovieData(final Bundle savedInstanceState) {
 
         // If first-time call, fetched movie info data ...
         if (savedInstanceState == null || (!savedInstanceState.containsKey(KEY_BUNDLE_MOVIEINFO) )) {
-            MovieInfoFetcher.fetchMoviesData(this, this, MovieInfoFetcherTask.MoviesListType.POPULAR);
+            MovieInfoFetcher.fetchMoviesData(
+                    this, this, MovieInfoFetcherTask.MoviesListType.POPULAR);
         }
         else {
             // Re-create from rotation, reload previously saved movie info data ...
@@ -71,18 +73,12 @@ public class MainActivity
             );
         }
 
-        // Set up the user interaction to manually show or hide the system UI.
-        mContentView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                toggle();
-            }
-        });
+    }
 
-        // Upon interacting with UI controls, delay any scheduled hide()
-        // operations to prevent the jarring behavior of controls going away
-        // while interacting with the UI.
-        findViewById(R.id.dummy_button).setOnTouchListener(mDelayHideTouchListener);
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putParcelableArrayList(KEY_BUNDLE_MOVIEINFO, listMovieInfo);
+        super.onSaveInstanceState(outState);
     }
 
     @Override
@@ -93,145 +89,63 @@ public class MainActivity
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        outState.putParcelableArrayList(KEY_BUNDLE_MOVIEINFO, listMovieInfo);
-        super.onSaveInstanceState(outState);
+    public boolean onCreateOptionsMenu(Menu menu) {
+        /* Use AppCompatActivity's method getMenuInflater to get a handle on the menu inflater */
+        MenuInflater inflater = getMenuInflater();
+        /* Use the inflater's inflate method to inflate our menu layout to this menu */
+        inflater.inflate(R.menu.activity_main_menu, menu);
+        /* Return true so that the menu is displayed in the Toolbar */
+        return true;
     }
 
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        // Disable menu that was selected, enable other menu ...
+        if (typeMoviesList == MovieInfoFetcherTask.MoviesListType.POPULAR) {
+            // See menu xml's orderInCategory values
+            menu.getItem(0).setEnabled(true);
+            menu.getItem(1).setEnabled(false);
+        }
+        else if (typeMoviesList == MovieInfoFetcherTask.MoviesListType.TOP_RATED) {
+            // See menu xml's orderInCategory values
+            menu.getItem(0).setEnabled(false);
+            menu.getItem(1).setEnabled(true);
+        }
+        else {
+            throw new IllegalStateException("Unknown movies list type! ["+ typeMoviesList +"]");
+        }
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        switch (id) {
+            case R.id.menu_top_rated:
+                typeMoviesList = MovieInfoFetcherTask.MoviesListType.TOP_RATED;
+                MovieInfoFetcher.fetchMoviesData(
+                        this, this, typeMoviesList);
+                break;
+            case R.id.menu_popular:
+                typeMoviesList = MovieInfoFetcherTask.MoviesListType.POPULAR;
+                MovieInfoFetcher.fetchMoviesData(
+                        this, this, typeMoviesList);
+                break;
+            default:
+                throw new IllegalStateException("Unknown options item id! ["+ id +"]");
+        }
+        invalidateOptionsMenu(); // Android 3.0+ needs this to re-call onPrepareOptionsMenu
+        return super.onOptionsItemSelected(item);
+    }
+
+    /**
+     * <p>Called by {@link MovieInfoFetcherTask} when it has completed fetching movie info.</p>
+     * @param listMovieInfo An {@link ArrayList} of {@link MovieInfo} objects, containing movie info.
+     */
     @Override
     public void fetched(ArrayList<MovieInfo> listMovieInfo) {
         this.listMovieInfo = listMovieInfo;
-        mAdapterMovieInfo.setDataMovieInfo(listMovieInfo);
+        mAdapterMovieInfo.setDataMovieInfo(this.listMovieInfo);
     }
-
-    //////////////////////////////////////////////////////////////////////
-    // Below added by AndroidStudio for 'Full Screen' activity support ...
-    //////////////////////////////////////////////////////////////////////
-
-    @Override
-    protected void onPostCreate(Bundle savedInstanceState) {
-        super.onPostCreate(savedInstanceState);
-
-        // Trigger the initial hide() shortly after the activity has been
-        // created, to briefly hint to the user that UI controls
-        // are available.
-        delayedHide(100);
-    }
-
-    private void toggle() {
-        if (mVisible) {
-            hide();
-        } else {
-            show();
-        }
-    }
-
-    private void hide() {
-        // Hide UI first
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.hide();
-        }
-        mControlsView.setVisibility(View.GONE);
-        mVisible = false;
-
-        // Schedule a runnable to remove the status and navigation bar after a delay
-        mHideHandler.removeCallbacks(mShowPart2Runnable);
-        mHideHandler.postDelayed(mHidePart2Runnable, UI_ANIMATION_DELAY);
-    }
-
-    @SuppressLint("InlinedApi")
-    private void show() {
-        // Show the system bar
-        mContentView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
-        mVisible = true;
-
-        // Schedule a runnable to display UI elements after a delay
-        mHideHandler.removeCallbacks(mHidePart2Runnable);
-        mHideHandler.postDelayed(mShowPart2Runnable, UI_ANIMATION_DELAY);
-    }
-
-    /**
-     * Schedules a call to hide() in delay milliseconds, canceling any
-     * previously scheduled calls.
-     */
-    private void delayedHide(int delayMillis) {
-        mHideHandler.removeCallbacks(mHideRunnable);
-        mHideHandler.postDelayed(mHideRunnable, delayMillis);
-    }
-
-
-    /**
-     * Whether or not the system UI should be auto-hidden after
-     * {@link #AUTO_HIDE_DELAY_MILLIS} milliseconds.
-     */
-    private static final boolean AUTO_HIDE = true;
-
-    /**
-     * If {@link #AUTO_HIDE} is set, the number of milliseconds to wait after
-     * user interaction before hiding the system UI.
-     */
-    private static final int AUTO_HIDE_DELAY_MILLIS = 3000;
-
-    /**
-     * Some older devices needs a small delay between UI widget updates
-     * and a change of the status and navigation bar.
-     */
-    private static final int UI_ANIMATION_DELAY = 300;
-    private final Handler mHideHandler = new Handler();
-    private final Runnable mHidePart2Runnable = new Runnable() {
-        @SuppressLint("InlinedApi")
-        @Override
-        public void run() {
-            // Delayed removal of status and navigation bar
-
-            // Note that some of these constants are new as of API 16 (Jelly Bean)
-            // and API 19 (KitKat). It is safe to use them, as they are inlined
-            // at compile-time and do nothing on earlier devices.
-            mContentView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE
-                    | View.SYSTEM_UI_FLAG_FULLSCREEN
-                    | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                    | View.SYSTEM_UI_FLAG_IMMERSIVE
-                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
-        }
-    };
-
-    private final Runnable mShowPart2Runnable = new Runnable() {
-        @Override
-        public void run() {
-            // Delayed display of UI elements
-            ActionBar actionBar = getSupportActionBar();
-            if (actionBar != null) {
-                actionBar.show();
-            }
-            mControlsView.setVisibility(View.VISIBLE);
-        }
-    };
-    private boolean mVisible;
-    private final Runnable mHideRunnable = new Runnable() {
-        @Override
-        public void run() {
-            hide();
-        }
-    };
-    /**
-     * Touch listener to use for in-layout UI controls to delay hiding the
-     * system UI. This is to prevent the jarring behavior of controls going away
-     * while interacting with activity UI.
-     */
-    private final View.OnTouchListener mDelayHideTouchListener = new View.OnTouchListener() {
-        @Override
-        public boolean onTouch(View view, MotionEvent motionEvent) {
-            if (AUTO_HIDE) {
-                delayedHide(AUTO_HIDE_DELAY_MILLIS);
-            }
-            return false;
-        }
-    };
-
-    //////////////////////////////////////////////////////////////////////
-    //////////////////////////////////////////////////////////////////////
 
 }
