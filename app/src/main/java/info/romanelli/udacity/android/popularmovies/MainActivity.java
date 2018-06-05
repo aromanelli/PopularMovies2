@@ -139,8 +139,14 @@ public class MainActivity
      */
     @Override
     public void fetched(ArrayList<MovieInfo> listMovieInfo) {
+        // Remember the list of MovieInfo objects ...
         this.listMovieInfo = listMovieInfo;
+
+        // Tell the adapter to update ...
+        mContentView.getLayoutManager().scrollToPosition(0);
         mAdapterMovieInfo.setDataMovieInfo(this.listMovieInfo);
+
+        // Set the title of the app to reflect the type of movies being showing ...
         if (typeMoviesList == MovieInfoFetcherTask.MoviesListType.POPULAR) {
             setTitle(getResources().getString(R.string.app_title_popular));
         }
