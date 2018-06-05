@@ -15,6 +15,7 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
+import info.romanelli.udacity.android.popularmovies.MainActivity;
 import info.romanelli.udacity.android.popularmovies.R;
 
 public class MovieInfoAdapter extends RecyclerView.Adapter<MovieInfoAdapter.MovieInfoViewHolder> {
@@ -54,9 +55,13 @@ public class MovieInfoAdapter extends RecyclerView.Adapter<MovieInfoAdapter.Movi
 
     @Override
     public void onBindViewHolder(@NonNull MovieInfoViewHolder holder, int position) {
+//        // Determine good size for posters (should call from MainActivity) ...
+//        DisplayMetrics metrics = new DisplayMetrics();
+//        getWindowManager().getDefaultDisplay().getMetrics(metrics);
+//        Log.d(TAG, "onCreate: DisplayMetrics: " + metrics);
         final Uri uri = Uri.parse("http://image.tmdb.org/t/p/")
                 .buildUpon()
-                .appendEncodedPath("original")
+                .appendEncodedPath("w342")
                 .appendEncodedPath(listMovieInfo.get(position).getPosterURL())
                 .build();
         Log.d(TAG, "onBindViewHolder: Uri for poster: ["+ uri +"]");

@@ -25,8 +25,11 @@ import info.romanelli.udacity.android.popularmovies.util.MovieInfoFetcherTask;
  * An example full-screen activity that shows and hides the system UI (i.e.
  * status bar and navigation/system bar) with user interaction.
  */
-public class MainActivity extends AppCompatActivity
-        implements MovieInfoAdapter.MovieInfoAdapterOnClickHandler,MovieInfoFetcherTask.MovieInfoFetchedListener {
+public class MainActivity
+        extends AppCompatActivity
+        implements
+            MovieInfoAdapter.MovieInfoAdapterOnClickHandler,
+            MovieInfoFetcherTask.MovieInfoFetchedListener {
 
     final static private String TAG = MainActivity.class.getSimpleName();
 
@@ -46,10 +49,6 @@ public class MainActivity extends AppCompatActivity
 
         setContentView(R.layout.activity_main);
 
-        DisplayMetrics metrics = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics(metrics);
-        Log.d(TAG, "onCreate: DisplayMetrics: " + metrics);
-
         mVisible = true;
         mControlsView = findViewById(R.id.fullscreen_content_controls);
         mContentView = findViewById(R.id.fullscreen_content);
@@ -60,11 +59,12 @@ public class MainActivity extends AppCompatActivity
         mAdapterMovieInfo = new MovieInfoAdapter(this, this);
         mContentView.setAdapter(mAdapterMovieInfo);
 
-        // If creating from a rotation, reload previously fetched movie info data ...
+        // If first-time call, fetched movie info data ...
         if (savedInstanceState == null || (!savedInstanceState.containsKey(KEY_BUNDLE_MOVIEINFO) )) {
-            MovieInfoFetcher.fetchPopularMovies(this, this);
-            // MovieInfoFetcher.fetchTopRatedMovies(this, this);
-        } else {
+            MovieInfoFetcher.fetchMoviesData(this, this, MovieInfoFetcherTask.MoviesListType.POPULAR);
+        }
+        else {
+            // Re-create from rotation, reload previously saved movie info data ...
             listMovieInfo = savedInstanceState.getParcelableArrayList(KEY_BUNDLE_MOVIEINFO);
             mAdapterMovieInfo.setDataMovieInfo(
                     savedInstanceState.<MovieInfo>getParcelableArrayList(KEY_BUNDLE_MOVIEINFO)

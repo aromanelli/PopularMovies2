@@ -137,7 +137,7 @@ public class MovieInfoFetcherTask extends AsyncTask<Object, Integer, ArrayList<M
 
     // See project sandwich-club-starter-code, classes Jsonutils, strings.xml, and Sandwich
     // TODO AOR Code fetching all pages of list, not just first one!
-    // TODO AOR Use page requesting specific URL, not generic link.
+    // TODO AOR Use requesting specific page URL, not generic link.
     private ArrayList<MovieInfo> parseJSON(final String json) {
         try {
             final JSONObject jsonObjMoviePage = new JSONObject(json);
