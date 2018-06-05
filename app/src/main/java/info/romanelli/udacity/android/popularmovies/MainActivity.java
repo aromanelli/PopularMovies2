@@ -6,7 +6,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import java.util.ArrayList;
@@ -90,11 +89,7 @@ public class MainActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        /* Use AppCompatActivity's method getMenuInflater to get a handle on the menu inflater */
-        MenuInflater inflater = getMenuInflater();
-        /* Use the inflater's inflate method to inflate our menu layout to this menu */
-        inflater.inflate(R.menu.activity_main_menu, menu);
-        /* Return true so that the menu is displayed in the Toolbar */
+        getMenuInflater().inflate(R.menu.activity_main_menu, menu);
         return true;
     }
 
@@ -146,6 +141,15 @@ public class MainActivity
     public void fetched(ArrayList<MovieInfo> listMovieInfo) {
         this.listMovieInfo = listMovieInfo;
         mAdapterMovieInfo.setDataMovieInfo(this.listMovieInfo);
+        if (typeMoviesList == MovieInfoFetcherTask.MoviesListType.POPULAR) {
+            setTitle(getResources().getString(R.string.app_title_popular));
+        }
+        else if (typeMoviesList == MovieInfoFetcherTask.MoviesListType.TOP_RATED) {
+            setTitle(getResources().getString(R.string.app_title_top_rated));
+        }
+        else {
+            throw new IllegalStateException("Unknown movies list type! ["+ typeMoviesList +"]");
+        }
     }
 
 }
