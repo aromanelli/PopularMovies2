@@ -35,6 +35,7 @@ public class MovieInfo implements Parcelable {
         posterURL = in.readString();
         overview = in.readString();
         voteAverage = in.readString();
+        releaseDate = in.readString();
     }
 
 //    // https://developers.themoviedb.org/3/movies/get-popular-movies does not specify
@@ -143,5 +144,6 @@ public class MovieInfo implements Parcelable {
         dest.writeString(posterURL);
         dest.writeString(overview);
         dest.writeString(voteAverage);
+        dest.writeString(releaseDate);
     }
 }
