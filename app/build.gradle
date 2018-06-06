@@ -18,7 +18,7 @@ android {
             // For Java ...
             buildConfigField 'String', "ApiKey_TheMovieDB", ApiKey_TheMovieDB
             // For non-Java (layouts, resources, etc.) ...
-            resValue 'string', "api_key_themoviedb", ApiKey_TheMovieDB
+            // resValue 'string', "api_key_themoviedb", ApiKey_TheMovieDB
         }
         release {
             // https://medium.com/code-better/hiding-api-keys-from-your-android-repository-b23f5598b906

@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -27,13 +28,11 @@ public class MainActivity
 
     final static private String TAG = MainActivity.class.getSimpleName();
 
-    final static private String KEY_BUNDLE_MOVIEINFO = "KEY_BUNDLE_MOVIEINFO";
-
     private RecyclerView mContentView;
 
     private MovieInfoAdapter mAdapterMovieInfo;
 
-    // Bundle.putParcelableArrayList requires ArrayList
+    // Bundle.putParcelableArrayList requires ArrayList not List
     private ArrayList<MovieInfo> listMovieInfo;
 
     private MovieInfoFetcherTask.MoviesListType typeMoviesList =
@@ -58,32 +57,29 @@ public class MainActivity
     }
 
     private void fetchMovieData(final Bundle savedInstanceState) {
-
         // If first-time call, fetched movie info data ...
-        if (savedInstanceState == null || (!savedInstanceState.containsKey(KEY_BUNDLE_MOVIEINFO) )) {
+        if ( (savedInstanceState == null) ||
+                (!savedInstanceState.containsKey(DetailActivity.KEY_BUNDLE_MOVIEINFO))) {
             MovieInfoFetcher.fetchMoviesData(
                     this, this, MovieInfoFetcherTask.MoviesListType.POPULAR);
         }
         else {
             // Re-create from rotation, reload previously saved movie info data ...
-            listMovieInfo = savedInstanceState.getParcelableArrayList(KEY_BUNDLE_MOVIEINFO);
-            mAdapterMovieInfo.setDataMovieInfo(
-                    savedInstanceState.<MovieInfo>getParcelableArrayList(KEY_BUNDLE_MOVIEINFO)
-            );
+            listMovieInfo = savedInstanceState.getParcelableArrayList(DetailActivity.KEY_BUNDLE_MOVIEINFO);
+            mAdapterMovieInfo.setDataMovieInfo(listMovieInfo);
         }
-
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        outState.putParcelableArrayList(KEY_BUNDLE_MOVIEINFO, listMovieInfo);
+        outState.putParcelableArrayList(DetailActivity.KEY_BUNDLE_MOVIEINFO, listMovieInfo);
         super.onSaveInstanceState(outState);
     }
 
     @Override
     public void onClick(MovieInfo mi) {
         Intent intent = new Intent(this, DetailActivity.class);
-        intent.putExtra(KEY_BUNDLE_MOVIEINFO, mi);
+        intent.putExtra(DetailActivity.KEY_BUNDLE_MOVIEINFO, mi);
         startActivity(intent);
     }
 
@@ -96,18 +92,19 @@ public class MainActivity
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         // Disable menu that was selected, enable other menu ...
-        if (typeMoviesList == MovieInfoFetcherTask.MoviesListType.POPULAR) {
-            // See menu xml's orderInCategory values
-            menu.getItem(0).setEnabled(true);
-            menu.getItem(1).setEnabled(false);
-        }
-        else if (typeMoviesList == MovieInfoFetcherTask.MoviesListType.TOP_RATED) {
-            // See menu xml's orderInCategory values
-            menu.getItem(0).setEnabled(false);
-            menu.getItem(1).setEnabled(true);
-        }
-        else {
-            throw new IllegalStateException("Unknown movies list type! ["+ typeMoviesList +"]");
+        switch(typeMoviesList) {
+            // For getItem index value see menu xml's orderInCategory values
+            case POPULAR:
+                menu.getItem(0).setEnabled(true);
+                menu.getItem(1).setEnabled(false);
+                break;
+            case TOP_RATED:
+                menu.getItem(0).setEnabled(false);
+                menu.getItem(1).setEnabled(true);
+                break;
+            default:
+                Log.e(TAG, "onPrepareOptionsMenu: Unknown movies list type! ["+ typeMoviesList +"]" );
+                break;
         }
         return true;
     }
@@ -127,8 +124,9 @@ public class MainActivity
                         this, this, typeMoviesList);
                 break;
             default:
-                throw new IllegalStateException("Unknown options item id! ["+ id +"]");
+                Log.e(TAG, "onOptionsItemSelected: Unknown options item id! ["+ id +"]" );
         }
+
         invalidateOptionsMenu(); // Android 3.0+ needs this to re-call onPrepareOptionsMenu
         return super.onOptionsItemSelected(item);
     }
@@ -139,6 +137,7 @@ public class MainActivity
      */
     @Override
     public void fetched(ArrayList<MovieInfo> listMovieInfo) {
+
         // Remember the list of MovieInfo objects ...
         this.listMovieInfo = listMovieInfo;
 
@@ -147,15 +146,18 @@ public class MainActivity
         mAdapterMovieInfo.setDataMovieInfo(this.listMovieInfo);
 
         // Set the title of the app to reflect the type of movies being showing ...
-        if (typeMoviesList == MovieInfoFetcherTask.MoviesListType.POPULAR) {
-            setTitle(getResources().getString(R.string.app_title_popular));
+        switch(typeMoviesList) {
+            case POPULAR:
+                setTitle(getResources().getString(R.string.app_title_popular));
+                break;
+            case TOP_RATED:
+                setTitle(getResources().getString(R.string.app_title_top_rated));
+                break;
+            default:
+                Log.e(TAG, "fetched: Unknown movies list type! ["+ typeMoviesList +"]" );
+                break;
         }
-        else if (typeMoviesList == MovieInfoFetcherTask.MoviesListType.TOP_RATED) {
-            setTitle(getResources().getString(R.string.app_title_top_rated));
-        }
-        else {
-            throw new IllegalStateException("Unknown movies list type! ["+ typeMoviesList +"]");
-        }
+
     }
 
 }

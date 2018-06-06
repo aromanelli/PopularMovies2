@@ -45,18 +45,20 @@ public class MovieInfoFetcherTask extends AsyncTask<Object, Integer, ArrayList<M
         TOP_RATED ("top_rated");
 
         final private String typeURLPartial;
+
         MoviesListType(String typeURLPartial) {
             this.typeURLPartial = typeURLPartial;
         }
+
         /** <p>Returns a partial {@link URL} for the movies list type.</p>
          * @return Either '{@code popular}' or '{@code top_rated}'. */
-        public String getURLForType() {
+        String getURLForType() {
             return typeURLPartial;
         }
     }
 
-    // https://stackoverflow.com/questions/12575068/how-to-get-the-result-of-onpostexecute-to-main-activity-because-asynctask-is-a
     private MovieInfoFetchedListener listener;
+    // https://stackoverflow.com/questions/12575068/how-to-get-the-result-of-onpostexecute-to-main-activity-because-asynctask-is-a
     public interface MovieInfoFetchedListener {
         void fetched(ArrayList<MovieInfo> listMovieInfo);
     }
@@ -68,11 +70,11 @@ public class MovieInfoFetcherTask extends AsyncTask<Object, Integer, ArrayList<M
         MovieInfoFetcherTask.MoviesListType moviesType = null;
         for (Object arg : arguments) {
             if (arg instanceof MovieInfoFetcherTask.MoviesListType) {
-                // We'll just allow last one in, in case dev passes more than one
+                // We'll just accept the last one in, in case dev passes in more than one
                 moviesType = (MoviesListType) arg;
                 Log.d(TAG, "doInBackground() called with: movieType = [" + moviesType + "]");
             } else if (arg instanceof MovieInfoFetchedListener) {
-                // We'll just allow last one in, in case dev passes more than one
+                // We'll just accept the last one in, in case dev passes in more than one
                 listener = (MovieInfoFetchedListener) arg;
             }
         }
@@ -126,19 +128,20 @@ public class MovieInfoFetcherTask extends AsyncTask<Object, Integer, ArrayList<M
         // Assemble and build the Uri ...
         Uri uri = Uri.parse("https://api.themoviedb.org/3/movie")
                 .buildUpon()
-                .appendEncodedPath(moviesListType.getURLForType())
+                .appendEncodedPath(moviesListType.getURLForType()) // NOT appendPath!
                 .appendQueryParameter(API_KEY_PARAM_NAME, API_KEY_TMDB)
                 .build();
         // Create the URL from the Uri ...
         return new URL(uri.toString());
     }
 
-    // See project sandwich-club-starter-code, classes Jsonutils, strings.xml, and Sandwich
-    // TODO AOR Code fetching all pages of list, not just first one!
-    // TODO AOR Use requesting specific page URL, not generic link.
+    // See project sandwich-club-starter-code, classes JsonUtils, strings.xml, and Sandwich
+    // TODO Code fetching all pages of list, not just first one!
+    // TODO Use requesting specific page URL, not generic link.
     private ArrayList<MovieInfo> parseJSON(final String json) {
         try {
             final JSONObject jsonObjMoviePage = new JSONObject(json);
+
             // final int page = jsonObjMoviePage.getInt("page");
             // final int totalResults = jsonObjMoviePage.getInt("total_results");
             // final int totalPages = jsonObjMoviePage.getInt("total_pages");

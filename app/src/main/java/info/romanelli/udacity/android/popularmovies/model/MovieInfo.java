@@ -5,6 +5,7 @@ import android.os.Parcelable;
 
 import java.util.Objects;
 
+@SuppressWarnings("unused")
 public class MovieInfo implements Parcelable {
 
     final static private String TAG = MovieInfo.class.getSimpleName();
@@ -37,19 +38,6 @@ public class MovieInfo implements Parcelable {
         voteAverage = in.readString();
         releaseDate = in.readString();
     }
-
-//    // https://developers.themoviedb.org/3/movies/get-popular-movies does not specify
-//    // what time zone the release date is based on, so we just convert it to Locale.US ...
-//    final private SimpleDateFormat dateConverter =
-//            new SimpleDateFormat("yyyy-MM-dd", Locale.US);
-//    public Date getDateOfRelease() {
-//        try {
-//            return dateConverter.parse(releaseDate);
-//        } catch (ParseException pe) {
-//            Log.e(TAG, "getDateOfRelease: Unable to parse text into a Date!", pe);
-//            return null;
-//        }
-//    }
 
     public String getTitle() {
         return title;
@@ -93,7 +81,7 @@ public class MovieInfo implements Parcelable {
 
     /**
      * <p>Equality is based on the title and release date of the movie.</p>
-     * @param o
+     * @param o The object to check equality against.
      * @return {@code true} is equals, {@code false} if not.
      */
     @Override

@@ -1,8 +1,98 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".DetailActivity">
 
-</android.support.constraint.ConstraintLayout>
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/movie_poster_iv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:adjustViewBounds="true"
+            android:contentDescription="@string/movie_poster_image"
+            android:padding="1dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/descTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/desc_title"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/movie_poster_iv" />
+
+        <TextView
+            android:id="@+id/textTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            app:layout_constraintBottom_toBottomOf="@+id/descTitle"
+            app:layout_constraintStart_toEndOf="@+id/descVoteAvg"
+            app:layout_constraintTop_toTopOf="@+id/descTitle" />
+
+        <TextView
+            android:id="@+id/descReleaseDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/desc_rel_date"
+            app:layout_constraintStart_toStartOf="@+id/descTitle"
+            app:layout_constraintTop_toBottomOf="@+id/descTitle" />
+
+        <TextView
+            android:id="@+id/textReleaseDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            app:layout_constraintBottom_toBottomOf="@+id/descReleaseDate"
+            app:layout_constraintStart_toEndOf="@+id/descVoteAvg"
+            app:layout_constraintTop_toTopOf="@+id/descReleaseDate" />
+
+        <TextView
+            android:id="@+id/descVoteAvg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/desc_vote_avg"
+            app:layout_constraintStart_toStartOf="@+id/descReleaseDate"
+            app:layout_constraintTop_toBottomOf="@+id/descReleaseDate" />
+
+        <TextView
+            android:id="@+id/textVoteAvg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            app:layout_constraintBottom_toBottomOf="@+id/descVoteAvg"
+            app:layout_constraintStart_toEndOf="@+id/descVoteAvg"
+            app:layout_constraintTop_toTopOf="@+id/descVoteAvg" />
+
+        <TextView
+            android:id="@+id/textPlotSynopsis"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginTop="8dp"
+            android:textAlignment="viewStart"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/descVoteAvg"
+            app:layout_constraintTop_toBottomOf="@+id/descVoteAvg" />
+
+
+    </android.support.constraint.ConstraintLayout>
+</ScrollView>

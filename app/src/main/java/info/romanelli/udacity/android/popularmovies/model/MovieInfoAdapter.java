@@ -1,23 +1,20 @@
 package info.romanelli.udacity.android.popularmovies.model;
 
-import android.content.Context;
-import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.squareup.picasso.Picasso;
-
 import java.util.List;
 
 import info.romanelli.udacity.android.popularmovies.R;
+import info.romanelli.udacity.android.popularmovies.util.MovieInfoFetcher;
 
 public class MovieInfoAdapter extends RecyclerView.Adapter<MovieInfoAdapter.MovieInfoViewHolder> {
 
+    @SuppressWarnings("unused")
     final static private String TAG = MovieInfoAdapter.class.getSimpleName();
 
     private List<MovieInfo> listMovieInfo;
@@ -27,8 +24,8 @@ public class MovieInfoAdapter extends RecyclerView.Adapter<MovieInfoAdapter.Movi
         void onClick(final MovieInfo mi);
     }
 
-    public MovieInfoAdapter(final MovieInfoAdapterOnClickHandler clickHander ) {
-        this.clickHandler = clickHander;
+    public MovieInfoAdapter(final MovieInfoAdapterOnClickHandler clickHandler ) {
+        this.clickHandler = clickHandler;
     }
 
     public void setDataMovieInfo(final List<MovieInfo> listMovieInfo) {
@@ -50,17 +47,7 @@ public class MovieInfoAdapter extends RecyclerView.Adapter<MovieInfoAdapter.Movi
 
     @Override
     public void onBindViewHolder(@NonNull MovieInfoViewHolder holder, int position) {
-//        // Determine good size for posters (should call from MainActivity) ...
-//        DisplayMetrics metrics = new DisplayMetrics();
-//        getWindowManager().getDefaultDisplay().getMetrics(metrics);
-//        Log.d(TAG, "onCreate: DisplayMetrics: " + metrics);
-        final Uri uri = Uri.parse("http://image.tmdb.org/t/p/")
-                .buildUpon()
-                .appendEncodedPath("w185")
-                .appendEncodedPath(listMovieInfo.get(position).getPosterURL())
-                .build();
-        Log.d(TAG, "onBindViewHolder: Uri for poster: ["+ uri +"]");
-        Picasso.get().load(uri).into(holder.ivMoviePoster);
+        MovieInfoFetcher.setPosterToView(listMovieInfo.get(position), holder.ivMoviePoster);
     }
 
     @Override
@@ -85,6 +72,7 @@ public class MovieInfoAdapter extends RecyclerView.Adapter<MovieInfoAdapter.Movi
                 clickHandler.onClick( listMovieInfo.get( getAdapterPosition() ) );
             }
         }
+
     }
 
 }

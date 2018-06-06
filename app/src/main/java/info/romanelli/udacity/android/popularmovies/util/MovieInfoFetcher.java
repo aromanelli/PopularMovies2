@@ -3,7 +3,13 @@ package info.romanelli.udacity.android.popularmovies.util;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.util.Log;
+import android.widget.ImageView;
+
+import com.squareup.picasso.Picasso;
+
+import info.romanelli.udacity.android.popularmovies.model.MovieInfo;
 
 public class MovieInfoFetcher {
 
@@ -22,7 +28,8 @@ public class MovieInfoFetcher {
         }
     }
 
-    static private boolean isOnline(final Context context) {
+    @SuppressWarnings("WeakerAccess")
+    static public boolean isOnline(final Context context) {
         Log.d(TAG, "isOnline() called with: context = [" + context + "]");
         final boolean flag;
         ConnectivityManager cm =
@@ -36,6 +43,23 @@ public class MovieInfoFetcher {
         }
         Log.d(TAG, "isOnline: Online? " + flag);
         return flag;
+    }
+
+    static public void setPosterToView(MovieInfo mi, ImageView iv) {
+
+//        // Determine good size for posters (should call from MainActivity) ...
+//        DisplayMetrics metrics = new DisplayMetrics();
+//        getWindowManager().getDefaultDisplay().getMetrics(metrics);
+//        Log.d(TAG, "onCreate: DisplayMetrics: " + metrics);
+
+        final Uri uri = Uri.parse("http://image.tmdb.org/t/p/")
+                .buildUpon()
+                // "w92", "w154", "w185", "w342", "w500", "w780", or "original"
+                .appendEncodedPath("w342") // NOT appendPath!
+                .appendEncodedPath(mi.getPosterURL()) // NOT appendPath!
+                .build();
+        Log.d(TAG, "onBindViewHolder: Uri for poster: ["+ uri +"]");
+        Picasso.get().load(uri).into(iv);
     }
 
 }

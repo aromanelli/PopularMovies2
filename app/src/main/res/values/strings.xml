@@ -1,5 +1,6 @@
 <resources>
-    <string name="app_name">Popular Movies</string>
+    <string name="app_main_name">Popular Movies</string>
+    <string name="app_detail_name">Movie Information</string>
 
     <string name="menu_top_rated">Top Rated</string>
     <string name="menu_popular">Popular</string>
@@ -9,6 +10,8 @@
 
     <string name="movie_poster_image">Movie Poster</string>
 
-    <string name="dummy_button">Dummy Button</string>
-    <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="desc_title">Title:</string>
+    <string name="desc_rel_date">Release Date:</string>
+    <string name="desc_vote_avg">Vote Average:</string>
+
 </resources>
