@@ -1,6 +1,7 @@
 package info.romanelli.udacity.android.popularmovies.model;
 
 import android.support.annotation.NonNull;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,7 +23,7 @@ public class MovieInfoAdapter extends RecyclerView.Adapter<MovieInfoAdapter.Movi
     final private MovieInfoAdapterOnClickHandler clickHandler;
 
     public interface MovieInfoAdapterOnClickHandler {
-        void onClick(final MovieInfo mi);
+        void onMovieClick(final MovieInfo mi, final ImageView ivPoster);
     }
 
     public MovieInfoAdapter(final MovieInfoAdapterOnClickHandler clickHandler ) {
@@ -48,7 +49,14 @@ public class MovieInfoAdapter extends RecyclerView.Adapter<MovieInfoAdapter.Movi
 
     @Override
     public void onBindViewHolder(@NonNull MovieInfoViewHolder holder, int position) {
-        MovieInfoFetcher.setPosterToView(listMovieInfo.get(position), holder.ivMoviePoster);
+
+        final MovieInfo mi = listMovieInfo.get(position);
+
+        // Set the transition name for the new poster being shown in the
+        // common ImageView object/view ...
+        ViewCompat.setTransitionName(holder.ivMoviePoster, mi.getPosterURL());
+
+        MovieInfoFetcher.setPosterToView(null, mi, holder.ivMoviePoster);
     }
 
     @Override
@@ -70,7 +78,10 @@ public class MovieInfoAdapter extends RecyclerView.Adapter<MovieInfoAdapter.Movi
         public void onClick(View v) {
             int pos = getAdapterPosition();
             if (pos != RecyclerView.NO_POSITION) {
-                clickHandler.onClick( listMovieInfo.get( getAdapterPosition() ) );
+                clickHandler.onMovieClick(
+                        listMovieInfo.get( getAdapterPosition() ),
+                        ivMoviePoster
+                );
             }
         }
 

@@ -1,13 +1,16 @@
 package info.romanelli.udacity.android.popularmovies;
 
+import android.app.ActivityOptions;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ImageView;
 
 import java.util.ArrayList;
 
@@ -78,10 +81,18 @@ public class MainActivity
     }
 
     @Override
-    public void onClick(MovieInfo mi) {
+    public void onMovieClick(final MovieInfo mi, final ImageView ivPoster) {
         Intent intent = new Intent(this, DetailActivity.class);
         intent.putExtra(DetailActivity.KEY_BUNDLE_MOVIEINFO, mi);
-        startActivity(intent);
+        intent.putExtra("POSTER_TRANSITION_NAME", mi.getPosterURL());
+
+        ActivityOptions activityOptions = ActivityOptions.makeSceneTransitionAnimation(
+            this,
+                ivPoster,
+                // Set in DetailActivity.populateUI method ...
+                ViewCompat.getTransitionName(ivPoster)
+        );
+        startActivity(intent, activityOptions.toBundle());
     }
 
     @Override

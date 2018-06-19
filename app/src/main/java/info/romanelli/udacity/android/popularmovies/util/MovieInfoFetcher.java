@@ -5,6 +5,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.ImageView;
 
@@ -142,7 +143,7 @@ public class MovieInfoFetcher {
         return flag;
     }
 
-    static public void setPosterToView(MovieInfo mi, ImageView iv) {
+    static public void setPosterToView(final AppCompatActivity activity, MovieInfo mi, ImageView iv) {
 
 //        // Determine good size for posters (should call from MainActivity) ...
 //        DisplayMetrics metrics = new DisplayMetrics();
@@ -156,7 +157,32 @@ public class MovieInfoFetcher {
                 .appendEncodedPath(mi.getPosterURL()) // NOT appendPath!
                 .build();
         Log.d(TAG, "onBindViewHolder: Uri for poster: ["+ uri +"]");
-        Picasso.get().load(uri).into(iv);
+        Picasso.get().load(uri).into(
+                iv,
+                new com.squareup.picasso.Callback() {
+                    // Null checks are because this shared code is called from both
+                    // the detail activity, and the movie info RecyclerView.Adapter,
+                    // but only needs to be done from detail activity, since it has
+                    // a supportPostponeEnterTransition() on its onCreate method,
+                    // which pauses, but the adapter does not make that same call,
+                    // and hence does not postpone its transition animation.
+                    @Override
+                    public void onSuccess() {
+                        if (activity != null) {
+                            // Start up previously postpone transition to detail activity
+                            activity.supportStartPostponedEnterTransition();
+                        }
+                    }
+
+                    @Override
+                    public void onError(Exception e) {
+                        if (activity != null) {
+                            // Start up previously postpone transition to detail activity
+                            activity.supportStartPostponedEnterTransition();
+                        }
+                    }
+                }
+        );
     }
 
 }

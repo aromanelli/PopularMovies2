@@ -38,7 +38,12 @@ public class DetailActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
+
         ButterKnife.bind(this);
+
+        // Postpone activity shown transition until after poster is loaded (see
+        // method MovieInfoFetcher.setPosterToView to restarting transition).
+        supportPostponeEnterTransition();
 
         Intent intent = getIntent();
         if (intent.hasExtra(KEY_BUNDLE_MOVIEINFO)) {
@@ -53,7 +58,11 @@ public class DetailActivity extends AppCompatActivity {
 
     private void populateUI(final MovieInfo mi) {
         Log.d(TAG, "populateUI() called with: movieInfo = [" + mi + "]");
-        MovieInfoFetcher.setPosterToView(mi, mPoster);
+
+        // Set the URL for the movie poster to the ImageView showing the poster ...
+        mPoster.setTransitionName(mi.getPosterURL());
+
+        MovieInfoFetcher.setPosterToView(this, mi, mPoster);
         mTitle.setText(mi.getTitle());
         mReleaseDate.setText(mi.getReleaseDate());
         mVoteAverage.setText(mi.getVoteAverage());
