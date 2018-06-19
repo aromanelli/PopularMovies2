@@ -11,6 +11,8 @@ import android.view.MenuItem;
 
 import java.util.ArrayList;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import info.romanelli.udacity.android.popularmovies.model.MovieInfo;
 import info.romanelli.udacity.android.popularmovies.model.MovieInfoAdapter;
 import info.romanelli.udacity.android.popularmovies.util.MovieInfoFetcher;
@@ -28,7 +30,8 @@ public class MainActivity
 
     final static private String TAG = MainActivity.class.getSimpleName();
 
-    private RecyclerView mContentView;
+    @BindView(R.id.fullscreen_content)
+    RecyclerView mContentView;
 
     private MovieInfoAdapter mAdapterMovieInfo;
 
@@ -42,10 +45,8 @@ public class MainActivity
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_main);
-
-        mContentView = findViewById(R.id.fullscreen_content);
+        ButterKnife.bind(this);
 
         mContentView.setLayoutManager(new GridLayoutManager(this, 2));
         mContentView.hasFixedSize();

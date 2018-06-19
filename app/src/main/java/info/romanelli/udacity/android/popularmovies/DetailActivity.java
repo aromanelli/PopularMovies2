@@ -7,6 +7,8 @@ import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import info.romanelli.udacity.android.popularmovies.model.MovieInfo;
 import info.romanelli.udacity.android.popularmovies.util.MovieInfoFetcher;
 
@@ -16,11 +18,24 @@ public class DetailActivity extends AppCompatActivity {
 
     final static String KEY_BUNDLE_MOVIEINFO = "keyBundleMovieInfo";
 
+    @BindView(R.id.textTitle)
+    TextView mTitle;
+
+    @BindView(R.id.textReleaseDate)
+    TextView mReleaseDate;
+
+    @BindView(R.id.textVoteAvg)
+    TextView mVoteAverage;
+
+    @BindView(R.id.textPlotSynopsis)
+    TextView mPlotSynopsis;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
+        ButterKnife.bind(this);
 
         Intent intent = getIntent();
         if (intent.hasExtra(KEY_BUNDLE_MOVIEINFO)) {
@@ -36,10 +51,10 @@ public class DetailActivity extends AppCompatActivity {
     private void populateUI(final MovieInfo mi) {
         Log.d(TAG, "populateUI() called with: movieInfo = [" + mi + "]");
         MovieInfoFetcher.setPosterToView(mi, ((ImageView) findViewById(R.id.movie_poster_iv) ));
-        ((TextView) findViewById(R.id.textTitle)).setText(mi.getTitle());
-        ((TextView) findViewById(R.id.textReleaseDate)).setText(mi.getReleaseDate());
-        ((TextView) findViewById(R.id.textVoteAvg)).setText(mi.getVoteAverage());
-        ((TextView) findViewById(R.id.textPlotSynopsis)).setText(mi.getOverview());
+        mTitle.setText(mi.getTitle());
+        mReleaseDate.setText(mi.getReleaseDate());
+        mVoteAverage.setText(mi.getVoteAverage());
+        mPlotSynopsis.setText(mi.getOverview());
     }
 
 }
