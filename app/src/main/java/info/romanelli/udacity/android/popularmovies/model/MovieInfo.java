@@ -3,6 +3,8 @@ package info.romanelli.udacity.android.popularmovies.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.Objects;
 
 @SuppressWarnings("unused")
@@ -11,9 +13,16 @@ public class MovieInfo implements Parcelable {
     final static private String TAG = MovieInfo.class.getSimpleName();
 
     private String title;
+
+    @SerializedName("poster_path") // Name of attrib in json
     private String posterURL;
+
     private String overview;
+
+    @SerializedName("vote_average")
     private String voteAverage;
+
+    @SerializedName("release_date")
     private String releaseDate;
 
     public MovieInfo(

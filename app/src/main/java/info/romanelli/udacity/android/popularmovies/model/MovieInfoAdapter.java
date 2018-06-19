@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import info.romanelli.udacity.android.popularmovies.R;
@@ -29,7 +30,7 @@ public class MovieInfoAdapter extends RecyclerView.Adapter<MovieInfoAdapter.Movi
     }
 
     public void setDataMovieInfo(final List<MovieInfo> listMovieInfo) {
-        this.listMovieInfo = listMovieInfo;
+        this.listMovieInfo = (listMovieInfo != null) ? listMovieInfo : new ArrayList<MovieInfo>();
         notifyDataSetChanged();
     }
 

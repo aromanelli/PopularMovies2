@@ -18,6 +18,9 @@ public class DetailActivity extends AppCompatActivity {
 
     final static String KEY_BUNDLE_MOVIEINFO = "keyBundleMovieInfo";
 
+    @BindView(R.id.movie_poster_iv)
+    ImageView mPoster;
+
     @BindView(R.id.textTitle)
     TextView mTitle;
 
@@ -50,7 +53,7 @@ public class DetailActivity extends AppCompatActivity {
 
     private void populateUI(final MovieInfo mi) {
         Log.d(TAG, "populateUI() called with: movieInfo = [" + mi + "]");
-        MovieInfoFetcher.setPosterToView(mi, ((ImageView) findViewById(R.id.movie_poster_iv) ));
+        MovieInfoFetcher.setPosterToView(mi, mPoster);
         mTitle.setText(mi.getTitle());
         mReleaseDate.setText(mi.getReleaseDate());
         mVoteAverage.setText(mi.getVoteAverage());

@@ -16,7 +16,6 @@ import butterknife.ButterKnife;
 import info.romanelli.udacity.android.popularmovies.model.MovieInfo;
 import info.romanelli.udacity.android.popularmovies.model.MovieInfoAdapter;
 import info.romanelli.udacity.android.popularmovies.util.MovieInfoFetcher;
-import info.romanelli.udacity.android.popularmovies.util.MovieInfoFetcherTask;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -26,7 +25,7 @@ public class MainActivity
         extends AppCompatActivity
         implements
             MovieInfoAdapter.MovieInfoAdapterOnClickHandler,
-            MovieInfoFetcherTask.MovieInfoFetchedListener {
+            MovieInfoFetcher.MoviesInfoFetchedListener {
 
     final static private String TAG = MainActivity.class.getSimpleName();
 
@@ -38,8 +37,8 @@ public class MainActivity
     // Bundle.putParcelableArrayList requires ArrayList not List
     private ArrayList<MovieInfo> listMovieInfo;
 
-    private MovieInfoFetcherTask.MoviesListType typeMoviesList =
-        MovieInfoFetcherTask.MoviesListType.POPULAR;
+    private MovieInfoFetcher.MoviesInfoType typeMoviesList =
+        MovieInfoFetcher.MoviesInfoType.POPULAR;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,15 +53,16 @@ public class MainActivity
         mAdapterMovieInfo = new MovieInfoAdapter(this);
         mContentView.setAdapter(mAdapterMovieInfo);
 
-        fetchMovieData(savedInstanceState);
+        fetchMoviesInfo(savedInstanceState);
     }
 
-    private void fetchMovieData(final Bundle savedInstanceState) {
+    private void fetchMoviesInfo(final Bundle savedInstanceState) {
         // If first-time call, fetched movie info data ...
         if ( (savedInstanceState == null) ||
                 (!savedInstanceState.containsKey(DetailActivity.KEY_BUNDLE_MOVIEINFO))) {
-            MovieInfoFetcher.fetchMoviesData(
-                    this, this, MovieInfoFetcherTask.MoviesListType.POPULAR);
+            MovieInfoFetcher.fetchMoviesInfo(
+                    this, this, MovieInfoFetcher.MoviesInfoType.POPULAR
+            );
         }
         else {
             // Re-create from rotation, reload previously saved movie info data ...
@@ -115,13 +115,13 @@ public class MainActivity
         int id = item.getItemId();
         switch (id) {
             case R.id.menu_top_rated:
-                typeMoviesList = MovieInfoFetcherTask.MoviesListType.TOP_RATED;
-                MovieInfoFetcher.fetchMoviesData(
+                typeMoviesList = MovieInfoFetcher.MoviesInfoType.TOP_RATED;
+                MovieInfoFetcher.fetchMoviesInfo(
                         this, this, typeMoviesList);
                 break;
             case R.id.menu_popular:
-                typeMoviesList = MovieInfoFetcherTask.MoviesListType.POPULAR;
-                MovieInfoFetcher.fetchMoviesData(
+                typeMoviesList = MovieInfoFetcher.MoviesInfoType.POPULAR;
+                MovieInfoFetcher.fetchMoviesInfo(
                         this, this, typeMoviesList);
                 break;
             default:
@@ -133,19 +133,17 @@ public class MainActivity
     }
 
     /**
-     * <p>Called by {@link MovieInfoFetcherTask} when it has completed fetching movie info.</p>
+     * <p>Called by {@link MovieInfoFetcher} when it has completed fetching movie info.</p>
      * @param listMovieInfo An {@link ArrayList} of {@link MovieInfo} objects, containing movie info.
      */
     @Override
-    public void fetched(ArrayList<MovieInfo> listMovieInfo) {
-
+    public void moviesInfofetched(ArrayList<MovieInfo> listMovieInfo) {
+        Log.d(TAG, "moviesInfofetched() called with: listMovieInfo = [" + listMovieInfo + "]");
         // Remember the list of MovieInfo objects ...
         this.listMovieInfo = listMovieInfo;
-
         // Tell the adapter to update ...
         mContentView.getLayoutManager().scrollToPosition(0);
         mAdapterMovieInfo.setDataMovieInfo(this.listMovieInfo);
-
         // Set the title of the app to reflect the type of movies being showing ...
         switch(typeMoviesList) {
             case POPULAR:
@@ -158,7 +156,6 @@ public class MainActivity
                 Log.e(TAG, "fetched: Unknown movies list type! ["+ typeMoviesList +"]" );
                 break;
         }
-
     }
 
 }
