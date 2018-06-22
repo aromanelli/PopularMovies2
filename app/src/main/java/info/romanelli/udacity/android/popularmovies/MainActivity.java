@@ -83,6 +83,9 @@ public class MainActivity
     @Override
     public void onMovieClick(final MovieInfo movieInfo, final ImageView ivPoster) {
 
+        // Call showToast early, as it has its own internal 'wait before show' timer ...
+        InfoFetcherUtil.showToast(this, getString(R.string.progress_retrieving));
+
         Intent intent = new Intent(this, DetailActivity.class);
         intent.putExtra(DetailActivity.KEY_BUNDLE_MOVIEINFO, movieInfo);
 
@@ -94,8 +97,6 @@ public class MainActivity
                 ViewCompat.getTransitionName(ivPoster)
         );
 
-        InfoFetcherUtil.showProgress(
-                this, movieInfo.getTitle(), getString(R.string.progress_retrieving));
         startActivity(intent, activityOptions.toBundle());
     }
 

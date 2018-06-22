@@ -59,7 +59,7 @@ public class DetailActivity
             populateUI((MovieInfo) intent.getParcelableExtra(KEY_BUNDLE_MOVIEINFO));
         }
         else {
-            InfoFetcherUtil.closeProgress();
+            InfoFetcherUtil.hideToast();
             finish();
             Log.e(TAG, "onCreate: Expected to receive a MovieInfo object!");
         }
@@ -121,7 +121,7 @@ public class DetailActivity
 
         Log.d(TAG, "finalizeUI() called with: movieInfo = [" + movieInfo + "]");
 
-        InfoFetcherUtil.closeProgress();
+        InfoFetcherUtil.hideToast();
 
         // TODO AOR Set the videos and reviews info into the UI
 
