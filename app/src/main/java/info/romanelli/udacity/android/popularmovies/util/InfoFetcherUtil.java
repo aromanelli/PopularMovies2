@@ -95,14 +95,16 @@ public class InfoFetcherUtil {
                     }
                 }
                 public void onFinish() {
-                    Log.d(TAG, "onFinish: PENDING_PROGRESS_DIALOG: " + PENDING_PROGRESS_DIALOG +
-                            ", PROGRESS_DIALOG: " + PROGRESS_DIALOG);
-                    PROGRESS_DIALOG = new ProgressDialog(owner);
-                    PROGRESS_DIALOG.setMax(100);
-                    PROGRESS_DIALOG.setTitle(title);
-                    PROGRESS_DIALOG.setMessage(message);
-                    PROGRESS_DIALOG.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-                    PROGRESS_DIALOG.show();
+                    if (PENDING_PROGRESS_DIALOG) {
+                        Log.d(TAG, "onFinish: PENDING_PROGRESS_DIALOG: " + PENDING_PROGRESS_DIALOG +
+                                ", PROGRESS_DIALOG: " + PROGRESS_DIALOG);
+                        PROGRESS_DIALOG = new ProgressDialog(owner);
+                        PROGRESS_DIALOG.setMax(100);
+                        PROGRESS_DIALOG.setTitle(title);
+                        PROGRESS_DIALOG.setMessage(message);
+                        PROGRESS_DIALOG.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                        PROGRESS_DIALOG.show();
+                    }
                 }
             }.start();
         }
@@ -115,6 +117,8 @@ public class InfoFetcherUtil {
     }
 
     synchronized static public void closeProgress() {
+        Log.d(TAG, "closeProgress() called: PENDING_PROGRESS_DIALOG: " + PENDING_PROGRESS_DIALOG +
+                ", PROGRESS_DIALOG: " + PROGRESS_DIALOG);
         if (PENDING_PROGRESS_DIALOG) {
             if (PROGRESS_DIALOG != null) {
                 PROGRESS_DIALOG.dismiss();
