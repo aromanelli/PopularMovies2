@@ -5,6 +5,7 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.os.CountDownTimer;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.ImageView;
@@ -75,26 +76,51 @@ public class InfoFetcherUtil {
         );
     }
 
+    static private boolean PENDING_PROGRESS_DIALOG = false;
     static private ProgressDialog PROGRESS_DIALOG;
     synchronized static public void showProgress(
             final Context owner, final String title, final String message) {
-        if (PROGRESS_DIALOG == null) {
-            PROGRESS_DIALOG = new ProgressDialog(owner);
-            PROGRESS_DIALOG.setMax(100);
-            PROGRESS_DIALOG.setTitle(title);
-            PROGRESS_DIALOG.setMessage(message);
-            PROGRESS_DIALOG.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-            PROGRESS_DIALOG.show();
+        Log.d(TAG, "showProgress() called with: owner = [" + owner + "], title = [" + title + "], message = [" + message + "]");
+        Log.d(TAG, "showProgress: PENDING_PROGRESS_DIALOG: " + PENDING_PROGRESS_DIALOG +
+                ", PROGRESS_DIALOG: " + PROGRESS_DIALOG);
+        if (!PENDING_PROGRESS_DIALOG) {
+            PENDING_PROGRESS_DIALOG = true;
+            // Wait a bit before showing the progress dialog, don't show if no longer needed ...
+            new CountDownTimer(800, 200) {
+                public void onTick(long millisUntilFinished) {
+                    Log.d(TAG, "onTick: PENDING_PROGRESS_DIALOG: " + PENDING_PROGRESS_DIALOG +
+                            ", PROGRESS_DIALOG: " + PROGRESS_DIALOG);
+                    if (!PENDING_PROGRESS_DIALOG) {
+                        cancel();
+                    }
+                }
+                public void onFinish() {
+                    Log.d(TAG, "onFinish: PENDING_PROGRESS_DIALOG: " + PENDING_PROGRESS_DIALOG +
+                            ", PROGRESS_DIALOG: " + PROGRESS_DIALOG);
+                    PROGRESS_DIALOG = new ProgressDialog(owner);
+                    PROGRESS_DIALOG.setMax(100);
+                    PROGRESS_DIALOG.setTitle(title);
+                    PROGRESS_DIALOG.setMessage(message);
+                    PROGRESS_DIALOG.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                    PROGRESS_DIALOG.show();
+                }
+            }.start();
+        }
+        else {
+            //noinspection ConstantConditions
+            Log.d(TAG, "showProgress: PENDING_PROGRESS_DIALOG: " + PENDING_PROGRESS_DIALOG +
+                    ", PROGRESS_DIALOG: " + PROGRESS_DIALOG);
+            Log.w(TAG, "showProgress: A progress dialog is already queued for displaying.");
         }
     }
 
     synchronized static public void closeProgress() {
-        if (PROGRESS_DIALOG != null) {
-            PROGRESS_DIALOG.dismiss();
-            PROGRESS_DIALOG = null;
-        }
-        else {
-            Log.w(TAG, "closeProgress: Trying to close a progress dialog when one was not shown!");
+        if (PENDING_PROGRESS_DIALOG) {
+            if (PROGRESS_DIALOG != null) {
+                PROGRESS_DIALOG.dismiss();
+                PROGRESS_DIALOG = null;
+            }
+            PENDING_PROGRESS_DIALOG = false;
         }
     }
 
