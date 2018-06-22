@@ -18,7 +18,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import info.romanelli.udacity.android.popularmovies.model.MovieInfo;
 import info.romanelli.udacity.android.popularmovies.model.MovieInfoAdapter;
-import info.romanelli.udacity.android.popularmovies.util.MovieInfoFetcher;
+import info.romanelli.udacity.android.popularmovies.util.MoviesInfoFetcher;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -28,7 +28,7 @@ public class MainActivity
         extends AppCompatActivity
         implements
             MovieInfoAdapter.MovieInfoAdapterOnClickHandler,
-            MovieInfoFetcher.MoviesInfoFetchedListener {
+            MoviesInfoFetcher.Listener {
 
     final static private String TAG = MainActivity.class.getSimpleName();
 
@@ -40,8 +40,8 @@ public class MainActivity
     // Bundle.putParcelableArrayList requires ArrayList not List
     private ArrayList<MovieInfo> listMovieInfo;
 
-    private MovieInfoFetcher.MoviesInfoType typeMoviesList =
-        MovieInfoFetcher.MoviesInfoType.POPULAR;
+    private MoviesInfoFetcher.MoviesInfoType typeMoviesList =
+        MoviesInfoFetcher.MoviesInfoType.POPULAR;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,9 +63,8 @@ public class MainActivity
         // If first-time call, fetched movie info data ...
         if ( (savedInstanceState == null) ||
                 (!savedInstanceState.containsKey(DetailActivity.KEY_BUNDLE_MOVIEINFO))) {
-            MovieInfoFetcher.fetchMoviesInfo(
-                    this, this, MovieInfoFetcher.MoviesInfoType.POPULAR
-            );
+            MoviesInfoFetcher.fetchMoviesInfo(
+                    this, this, MoviesInfoFetcher.MoviesInfoType.POPULAR );
         }
         else {
             // Re-create from rotation, reload previously saved movie info data ...
@@ -126,13 +125,13 @@ public class MainActivity
         int id = item.getItemId();
         switch (id) {
             case R.id.menu_top_rated:
-                typeMoviesList = MovieInfoFetcher.MoviesInfoType.TOP_RATED;
-                MovieInfoFetcher.fetchMoviesInfo(
+                typeMoviesList = MoviesInfoFetcher.MoviesInfoType.TOP_RATED;
+                MoviesInfoFetcher.fetchMoviesInfo(
                         this, this, typeMoviesList);
                 break;
             case R.id.menu_popular:
-                typeMoviesList = MovieInfoFetcher.MoviesInfoType.POPULAR;
-                MovieInfoFetcher.fetchMoviesInfo(
+                typeMoviesList = MoviesInfoFetcher.MoviesInfoType.POPULAR;
+                MoviesInfoFetcher.fetchMoviesInfo(
                         this, this, typeMoviesList);
                 break;
             default:
@@ -144,11 +143,11 @@ public class MainActivity
     }
 
     /**
-     * <p>Called by {@link MovieInfoFetcher} when it has completed fetching movie info.</p>
+     * <p>Called by {@link MoviesInfoFetcher} when it has completed fetching movie info.</p>
      * @param listMovieInfo An {@link ArrayList} of {@link MovieInfo} objects, containing movie info.
      */
     @Override
-    public void moviesInfofetched(ArrayList<MovieInfo> listMovieInfo) {
+    public void fetchedMoviesInfo(ArrayList<MovieInfo> listMovieInfo) {
         Log.d(TAG, "moviesInfofetched() called with: listMovieInfo = [" + listMovieInfo + "]");
         // Remember the list of MovieInfo objects ...
         this.listMovieInfo = listMovieInfo;

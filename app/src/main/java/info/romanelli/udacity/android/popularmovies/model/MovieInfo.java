@@ -5,6 +5,7 @@ import android.os.Parcelable;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.util.Arrays;
 import java.util.Objects;
 
 @SuppressWarnings("unused")
@@ -12,40 +13,96 @@ public class MovieInfo implements Parcelable {
 
     final static private String TAG = MovieInfo.class.getSimpleName();
 
-    private String title;
+    @SerializedName("vote_count")
+    private int voteCount;
 
-    @SerializedName("poster_path") // Name of attrib in json
-    private String posterURL;
+    @SerializedName("id")
+    private int id;
 
-    private String overview;
+    @SerializedName("video")
+    private boolean video;
 
     @SerializedName("vote_average")
-    private String voteAverage;
+    private float voteAverage;
+
+    @SerializedName("title")
+    private String title;
+
+    @SerializedName("popularity")
+    private float popularity;
+
+    @SerializedName("poster_path")
+    private String posterURL;
+
+    @SerializedName("original_language")
+    private String originalLanguage;
+
+    @SerializedName("original_title")
+    private String originalTitle;
+
+    @SerializedName("genre_ids")
+    private int[] genreIds;
+
+    @SerializedName("backdrop_path")
+    private String backdropPath;
+
+    @SerializedName("adult")
+    private boolean adult;
+
+    @SerializedName("overview")
+    private String overview;
 
     @SerializedName("release_date")
     private String releaseDate;
 
-    public MovieInfo(
-            final String title,
-            final String posterURL,
-            final String overview,
-            final String voteAverage,
-            final String releaseDate) {
-
-        this.title = title;
-        this.posterURL = posterURL;
-        this.overview = overview;
-        this.voteAverage = voteAverage;
-        this.releaseDate = releaseDate;
+    @SuppressWarnings("WeakerAccess")
+    protected MovieInfo(Parcel in) {
+        voteCount = in.readInt();
+        id = in.readInt();
+        video = in.readByte() != 0;
+        voteAverage = in.readFloat();
+        title = in.readString();
+        popularity = in.readFloat();
+        posterURL = in.readString();
+        originalLanguage = in.readString();
+        originalTitle = in.readString();
+        genreIds = in.createIntArray();
+        backdropPath = in.readString();
+        adult = in.readByte() != 0;
+        overview = in.readString();
+        releaseDate = in.readString();
     }
 
-    @SuppressWarnings("WeakerAccess")
-    public MovieInfo(Parcel in) {
-        title = in.readString();
-        posterURL = in.readString();
-        overview = in.readString();
-        voteAverage = in.readString();
-        releaseDate = in.readString();
+    public int getVoteCount() {
+        return voteCount;
+    }
+
+    public void setVoteCount(int voteCount) {
+        this.voteCount = voteCount;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public boolean isVideo() {
+        return video;
+    }
+
+    public void setVideo(boolean video) {
+        this.video = video;
+    }
+
+    public float getVoteAverage() {
+        return voteAverage;
+    }
+
+    public void setVoteAverage(float voteAverage) {
+        this.voteAverage = voteAverage;
     }
 
     public String getTitle() {
@@ -56,12 +113,60 @@ public class MovieInfo implements Parcelable {
         this.title = title;
     }
 
+    public float getPopularity() {
+        return popularity;
+    }
+
+    public void setPopularity(float popularity) {
+        this.popularity = popularity;
+    }
+
     public String getPosterURL() {
         return posterURL;
     }
 
     public void setPosterURL(String posterURL) {
         this.posterURL = posterURL;
+    }
+
+    public String getOriginalLanguage() {
+        return originalLanguage;
+    }
+
+    public void setOriginalLanguage(String originalLanguage) {
+        this.originalLanguage = originalLanguage;
+    }
+
+    public String getOriginalTitle() {
+        return originalTitle;
+    }
+
+    public void setOriginalTitle(String originalTitle) {
+        this.originalTitle = originalTitle;
+    }
+
+    public int[] getGenreIds() {
+        return genreIds;
+    }
+
+    public void setGenreIds(int[] genreIds) {
+        this.genreIds = genreIds;
+    }
+
+    public String getBackdropPath() {
+        return backdropPath;
+    }
+
+    public void setBackdropPath(String backdropPath) {
+        this.backdropPath = backdropPath;
+    }
+
+    public boolean isAdult() {
+        return adult;
+    }
+
+    public void setAdult(boolean adult) {
+        this.adult = adult;
     }
 
     public String getOverview() {
@@ -72,14 +177,6 @@ public class MovieInfo implements Parcelable {
         this.overview = overview;
     }
 
-    public String getVoteAverage() {
-        return voteAverage;
-    }
-
-    public void setVoteAverage(String voteAverage) {
-        this.voteAverage = voteAverage;
-    }
-
     public String getReleaseDate() {
         return releaseDate;
     }
@@ -88,32 +185,36 @@ public class MovieInfo implements Parcelable {
         this.releaseDate = releaseDate;
     }
 
-    /**
-     * <p>Equality is based on the title and release date of the movie.</p>
-     * @param o The object to check equality against.
-     * @return {@code true} is equals, {@code false} if not.
-     */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         MovieInfo movieInfo = (MovieInfo) o;
-        return Objects.equals(title, movieInfo.title) &&
-                Objects.equals(releaseDate, movieInfo.releaseDate);
+        return id == movieInfo.id;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(title, releaseDate);
+
+        return Objects.hash(id);
     }
 
     @Override
     public String toString() {
         return "MovieInfo{" +
-                "title='" + title + '\'' +
+                "voteCount=" + voteCount +
+                ", id=" + id +
+                ", video=" + video +
+                ", voteAverage=" + voteAverage +
+                ", title='" + title + '\'' +
+                ", popularity=" + popularity +
                 ", posterURL='" + posterURL + '\'' +
+                ", originalLanguage='" + originalLanguage + '\'' +
+                ", originalTitle='" + originalTitle + '\'' +
+                ", genreIds=" + Arrays.toString(genreIds) +
+                ", backdropPath='" + backdropPath + '\'' +
+                ", adult=" + adult +
                 ", overview='" + overview + '\'' +
-                ", voteAverage='" + voteAverage + '\'' +
                 ", releaseDate='" + releaseDate + '\'' +
                 '}';
     }
@@ -137,10 +238,19 @@ public class MovieInfo implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(voteCount);
+        dest.writeInt(id);
+        dest.writeByte((byte) (video ? 1 : 0));
+        dest.writeFloat(voteAverage);
         dest.writeString(title);
+        dest.writeFloat(popularity);
         dest.writeString(posterURL);
+        dest.writeString(originalLanguage);
+        dest.writeString(originalTitle);
+        dest.writeIntArray(genreIds);
+        dest.writeString(backdropPath);
+        dest.writeByte((byte) (adult ? 1 : 0));
         dest.writeString(overview);
-        dest.writeString(voteAverage);
         dest.writeString(releaseDate);
     }
 }
