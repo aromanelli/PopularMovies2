@@ -14,4 +14,6 @@
     <string name="desc_rel_date">Release Date:</string>
     <string name="desc_vote_avg">Vote Average:</string>
 
+    <string name="progress_retrieving">Retrieving…</string>
+
 </resources>

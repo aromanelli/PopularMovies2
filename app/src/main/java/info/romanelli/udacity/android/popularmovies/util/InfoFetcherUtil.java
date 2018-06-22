@@ -1,5 +1,6 @@
 package info.romanelli.udacity.android.popularmovies.util;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -72,6 +73,29 @@ public class InfoFetcherUtil {
                     }
                 }
         );
+    }
+
+    static private ProgressDialog PROGRESS_DIALOG;
+    synchronized static public void showProgress(
+            final Context owner, final String title, final String message) {
+        if (PROGRESS_DIALOG == null) {
+            PROGRESS_DIALOG = new ProgressDialog(owner);
+            PROGRESS_DIALOG.setMax(100);
+            PROGRESS_DIALOG.setTitle(title);
+            PROGRESS_DIALOG.setMessage(message);
+            PROGRESS_DIALOG.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            PROGRESS_DIALOG.show();
+        }
+    }
+
+    synchronized static public void closeProgress() {
+        if (PROGRESS_DIALOG != null) {
+            PROGRESS_DIALOG.dismiss();
+            PROGRESS_DIALOG = null;
+        }
+        else {
+            Log.w(TAG, "closeProgress: Trying to close a progress dialog when one was not shown!");
+        }
     }
 
 }

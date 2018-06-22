@@ -18,6 +18,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import info.romanelli.udacity.android.popularmovies.model.MovieInfo;
 import info.romanelli.udacity.android.popularmovies.model.MovieInfoAdapter;
+import info.romanelli.udacity.android.popularmovies.util.InfoFetcherUtil;
 import info.romanelli.udacity.android.popularmovies.util.MoviesInfoFetcher;
 
 /**
@@ -93,6 +94,8 @@ public class MainActivity
                 ViewCompat.getTransitionName(ivPoster)
         );
 
+        InfoFetcherUtil.showProgress(
+                this, movieInfo.getTitle(), getString(R.string.progress_retrieving));
         startActivity(intent, activityOptions.toBundle());
     }
 

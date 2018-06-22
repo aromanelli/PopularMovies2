@@ -59,6 +59,7 @@ public class DetailActivity
             populateUI((MovieInfo) intent.getParcelableExtra(KEY_BUNDLE_MOVIEINFO));
         }
         else {
+            InfoFetcherUtil.closeProgress();
             finish();
             Log.e(TAG, "onCreate: Expected to receive a MovieInfo object!");
         }
@@ -76,7 +77,6 @@ public class DetailActivity
         movieInfo.setMovieVideosInfo(null); // null is flag for fetch not done yet
         MovieVideosFetcher.fetchMovieVideosInfo(this, movieInfo, this);
         MovieReviewsFetcher.fetchMovieReviewsInfo(this, movieInfo, this);
-        // TODO AOR Add a progress bar while waiting for videos/reviews to be fetched
 
         // Set the main info (not videos/reviews) to the UI widgets ...
         mTitle.setText(movieInfo.getTitle());
@@ -120,6 +120,8 @@ public class DetailActivity
     private void finalizeUI(final MovieInfo movieInfo) {
 
         Log.d(TAG, "finalizeUI() called with: movieInfo = [" + movieInfo + "]");
+
+        InfoFetcherUtil.closeProgress();
 
         // TODO AOR Set the videos and reviews info into the UI
 
