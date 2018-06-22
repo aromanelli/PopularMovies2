@@ -5,6 +5,7 @@ import android.os.Parcelable;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Objects;
 
@@ -71,6 +72,26 @@ public class MovieInfo implements Parcelable {
         adult = in.readByte() != 0;
         overview = in.readString();
         releaseDate = in.readString();
+    }
+
+    // Used by DetailActivity after it makes calls to fetch the data ...
+    private ArrayList<MovieVideosInfo> listMovieVideosInfo;
+    private ArrayList<MovieReviewsInfo> listMovieReviewsInfo;
+
+    public ArrayList<MovieVideosInfo> getMovieVideosInfo() {
+        return listMovieVideosInfo;
+    }
+
+    public void setMovieVideosInfo(ArrayList<MovieVideosInfo> listMovieVideosInfo) {
+        this.listMovieVideosInfo = listMovieVideosInfo;
+    }
+
+    public ArrayList<MovieReviewsInfo> getMovieReviewsInfo() {
+        return listMovieReviewsInfo;
+    }
+
+    public void setMovieReviewsInfo(ArrayList<MovieReviewsInfo> listMovieReviewsInfo) {
+        this.listMovieReviewsInfo = listMovieReviewsInfo;
     }
 
     public int getVoteCount() {

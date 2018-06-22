@@ -65,32 +65,67 @@ public class DetailActivity
 
     }
 
-    private void populateUI(final MovieInfo mi) {
-        Log.d(TAG, "populateUI() called with: movieInfo = [" + mi + "]");
+    private void populateUI(final MovieInfo movieInfo) {
+        Log.d(TAG, "populateUI() called with: movieInfo = [" + movieInfo + "]");
 
         // Set the URL for the movie poster to the ImageView showing the poster ...
-        mPoster.setTransitionName(mi.getPosterURL());
-
-        InfoFetcherUtil.setPosterToView(this, mi, mPoster);
-        mTitle.setText(mi.getTitle());
-        mReleaseDate.setText(mi.getReleaseDate());
-        mVoteAverage.setText(
-                String.format(Locale.getDefault(), "%s", mi.getVoteAverage())
-        );
-        mPlotSynopsis.setText(mi.getOverview());
+        mPoster.setTransitionName(movieInfo.getPosterURL());
 
         // Make calls to get videos and reviews information ...
-        MovieVideosFetcher.fetchMovieVideosInfo(this, mi.getId(), this);
-        MovieReviewsFetcher.fetchMovieReviewsInfo(this, mi.getId(), this);
+        movieInfo.setMovieReviewsInfo(null); // null is flag for fetch not done yet
+        movieInfo.setMovieVideosInfo(null); // null is flag for fetch not done yet
+        MovieVideosFetcher.fetchMovieVideosInfo(this, movieInfo, this);
+        MovieReviewsFetcher.fetchMovieReviewsInfo(this, movieInfo, this);
+        // TODO AOR Add a progress bar while waiting for videos/reviews to be fetched
+
+        // Set the main info (not videos/reviews) to the UI widgets ...
+        mTitle.setText(movieInfo.getTitle());
+        mReleaseDate.setText(movieInfo.getReleaseDate());
+        mVoteAverage.setText(
+                String.format(Locale.getDefault(), "%s", movieInfo.getVoteAverage())
+        );
+        mPlotSynopsis.setText(movieInfo.getOverview());
     }
 
     @Override
-    public void fetchedMovieVideosInfo(ArrayList<MovieVideosInfo> listMovieVideosInfo) {
-        Log.d(TAG, "fetchedMovieVideosInfo() called with: listMovieVideosInfo = [" + listMovieVideosInfo + "]");
+    public void fetchedMovieVideosInfo(MovieInfo movieInfo,
+                                       ArrayList<MovieVideosInfo> listMovieVideosInfo) {
+        Log.d(TAG, "fetchedMovieVideosInfo() called with: movieInfo = [" + movieInfo +
+                "], listMovieVideosInfo = [" + listMovieVideosInfo + "]");
+
+        // Update the MovieInfo reference with the videos info ...
+        movieInfo.setMovieVideosInfo(listMovieVideosInfo);
+
+        // If both videos and reviews data has been fetched, show the detail activity UI ...
+        if ((movieInfo.getMovieReviewsInfo() != null) && (movieInfo.getMovieVideosInfo() != null)) {
+            finalizeUI(movieInfo);
+        }
     }
 
     @Override
-    public void fetchedMovieReviewsInfo(ArrayList<MovieReviewsInfo> listMovieReviewsInfo) {
-        Log.d(TAG, "fetchedMovieReviewsInfo() called with: listMovieReviewsInfo = [" + listMovieReviewsInfo + "]");
+    public void fetchedMovieReviewsInfo(MovieInfo movieInfo,
+                                        ArrayList<MovieReviewsInfo> listMovieReviewsInfo) {
+        Log.d(TAG, "fetchedMovieReviewsInfo() called with: movieInfo = [" + movieInfo +
+                "], listMovieReviewsInfo = [" + listMovieReviewsInfo + "]");
+
+        // Update the MovieInfo reference with the reviews info ...
+        movieInfo.setMovieReviewsInfo(listMovieReviewsInfo);
+
+        // If both videos and reviews data has been fetched, show the detail activity UI ...
+        if ((movieInfo.getMovieReviewsInfo() != null) && (movieInfo.getMovieVideosInfo() != null)) {
+            finalizeUI(movieInfo);
+        }
     }
+
+    private void finalizeUI(final MovieInfo movieInfo) {
+
+        Log.d(TAG, "finalizeUI() called with: movieInfo = [" + movieInfo + "]");
+
+        // TODO AOR Set the videos and reviews info into the UI
+
+        // Display of this activity is postponed until code inside of setPosterToView is called!
+        InfoFetcherUtil.setPosterToView(this, movieInfo, mPoster);
+
+    }
+
 }

@@ -9,6 +9,7 @@ import com.google.gson.annotations.SerializedName;
 import java.util.ArrayList;
 
 import info.romanelli.udacity.android.popularmovies.BuildConfig;
+import info.romanelli.udacity.android.popularmovies.model.MovieInfo;
 import info.romanelli.udacity.android.popularmovies.model.MovieVideosInfo;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -21,7 +22,7 @@ public class MovieVideosFetcher extends AbstractFetcher {
     final static private String TAG = MovieVideosFetcher.class.getSimpleName();
 
     synchronized static public void fetchMovieVideosInfo (final Context context,
-                                                          final int movieId,
+                                                          final MovieInfo movieInfo,
                                                           final Listener listener ) {
 
         Log.d(TAG, "fetchMovieVideosInfo() called with: context = [" + context + "], listener = [" +
@@ -34,7 +35,7 @@ public class MovieVideosFetcher extends AbstractFetcher {
             Call<MovieVideosFetcher.Response> call =
                     RETROFIT.create(MovieVideosFetcher.Service.class)
                             .fetchMovieVideosInfo(
-                                    Integer.toString(movieId),
+                                    Integer.toString(movieInfo.getId()),
                                     "videos",
                                     // https://medium.com/code-better/hiding-api-keys-from-your-android-repository-b23f5598b906
                                     // https://stackoverflow.com/a/34021467/435519 (option #2)
@@ -50,10 +51,11 @@ public class MovieVideosFetcher extends AbstractFetcher {
                     Log.d(TAG, "onResponse: body: " + response.body());
                     if (response.body() != null) {
                         //noinspection ConstantConditions
-                        listener.fetchedMovieVideosInfo( response.body().getMovieVideosInfo() );
+                        notifyListener(response.body().getMovieVideosInfo());
                     }
                     else {
                         Log.e(TAG, "onResponse: No response body was returned!");
+                        notifyListener(null);
                     }
                 }
                 @Override
@@ -61,6 +63,14 @@ public class MovieVideosFetcher extends AbstractFetcher {
                         @NonNull final Call<MovieVideosFetcher.Response> call,
                         @NonNull final Throwable t) {
                     Log.e(TAG, "onFailure: ", t);
+                    notifyListener(null);
+                }
+                private void notifyListener(ArrayList<MovieVideosInfo> list) {
+                    if (list == null) {
+                        // Set empty list, so thaat DetailActivity will continue (non-null used as flag) ...
+                        list = new ArrayList<>(0);
+                    }
+                    listener.fetchedMovieVideosInfo( movieInfo, list );
                 }
             });
 
@@ -93,7 +103,8 @@ public class MovieVideosFetcher extends AbstractFetcher {
 
     // https://stackoverflow.com/questions/12575068/how-to-get-the-result-of-onpostexecute-to-main-activity-because-asynctask-is-a
     public interface Listener {
-        void fetchedMovieVideosInfo(ArrayList<MovieVideosInfo> listMovieVideosInfo);
+        void fetchedMovieVideosInfo(MovieInfo movieInfo,
+                                    ArrayList<MovieVideosInfo> listMovieVideosInfo);
     }
 
 }

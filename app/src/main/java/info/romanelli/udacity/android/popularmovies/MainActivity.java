@@ -80,17 +80,19 @@ public class MainActivity
     }
 
     @Override
-    public void onMovieClick(final MovieInfo mi, final ImageView ivPoster) {
-        Intent intent = new Intent(this, DetailActivity.class);
-        intent.putExtra(DetailActivity.KEY_BUNDLE_MOVIEINFO, mi);
-        intent.putExtra("POSTER_TRANSITION_NAME", mi.getPosterURL());
+    public void onMovieClick(final MovieInfo movieInfo, final ImageView ivPoster) {
 
+        Intent intent = new Intent(this, DetailActivity.class);
+        intent.putExtra(DetailActivity.KEY_BUNDLE_MOVIEINFO, movieInfo);
+
+        // Setup transition options for movie poster from/to main/detail activities ...
         ActivityOptions activityOptions = ActivityOptions.makeSceneTransitionAnimation(
             this,
                 ivPoster,
                 // Set in DetailActivity.populateUI method ...
                 ViewCompat.getTransitionName(ivPoster)
         );
+
         startActivity(intent, activityOptions.toBundle());
     }
 
