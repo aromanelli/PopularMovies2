@@ -98,12 +98,8 @@ public class InfoFetcherUtil {
                     if (PENDING_PROGRESS_DIALOG) {
                         Log.d(TAG, "onFinish: PENDING_PROGRESS_DIALOG: " + PENDING_PROGRESS_DIALOG +
                                 ", PROGRESS_DIALOG: " + PROGRESS_DIALOG);
-                        PROGRESS_DIALOG = new ProgressDialog(owner);
-                        PROGRESS_DIALOG.setMax(100);
-                        PROGRESS_DIALOG.setTitle(title);
-                        PROGRESS_DIALOG.setMessage(message);
-                        PROGRESS_DIALOG.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-                        PROGRESS_DIALOG.show();
+                        PROGRESS_DIALOG =
+                                ProgressDialog.show(owner, title, message, true, false);
                     }
                 }
             }.start();
