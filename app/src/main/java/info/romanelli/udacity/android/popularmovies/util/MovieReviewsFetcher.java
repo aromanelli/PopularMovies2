@@ -21,7 +21,7 @@ public class MovieReviewsFetcher extends AbstractFetcher {
 
     final static private String TAG = MovieReviewsFetcher.class.getSimpleName();
 
-    synchronized static public void fetchMovieReviewsInfo (final Context context,
+    synchronized static public void fetchMovieReviewsInfo(final Context context,
                                                           final MovieInfo movieInfo,
                                                           final Listener listener ) {
 
