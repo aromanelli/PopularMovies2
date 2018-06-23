@@ -4,8 +4,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
 import java.util.ArrayList;
 
@@ -37,6 +39,9 @@ public class DetailActivity
 
     @BindView(R.id.tvRating)
     TextView mVoteAverage;
+
+    @BindView(R.id.tbFavorite)
+    ToggleButton mFavorite;
 
     @BindView(R.id.tvPlotSynopsis)
     TextView mPlotSynopsis;
@@ -81,6 +86,17 @@ public class DetailActivity
         mTitle.setText(movieInfo.getTitle());
         mReleaseYear.setText(movieInfo.getReleaseDateYearText());
         mVoteAverage.setText(movieInfo.getVoteAverageText());
+
+        mFavorite.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "onClick() called: [" + mFavorite.isChecked() + "]");
+                if (mFavorite.isChecked()) {
+                    // TODO AOR Implement 'Favorites' functionality!
+                }
+            }
+        });
+
         mPlotSynopsis.setText(movieInfo.getOverview());
     }
 

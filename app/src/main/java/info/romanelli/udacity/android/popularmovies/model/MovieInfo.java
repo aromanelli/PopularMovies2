@@ -210,6 +210,8 @@ public class MovieInfo implements Parcelable {
         this.releaseDate = releaseDate;
     }
 
+    /////////////////////
+
     public String getReleaseDateYearText() {
         Log.d(TAG, "getReleaseDateYear() called: ["+ getReleaseDate() +"]");
         Calendar cal = Calendar.getInstance();
@@ -218,7 +220,7 @@ public class MovieInfo implements Parcelable {
     }
 
     public String getVoteAverageText() {
-        return String.format(Locale.getDefault(), "%s", getVoteAverage());
+        return String.format(Locale.getDefault(), "%s / 10", getVoteAverage());
     }
 
     @Override

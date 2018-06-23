@@ -30,7 +30,7 @@
             android:id="@+id/ivMoviePoster"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
+            android:layout_marginStart="24dp"
             android:layout_marginTop="8dp"
             android:adjustViewBounds="true"
             android:contentDescription="@string/movie_poster_image"
@@ -66,12 +66,25 @@
             app:layout_constraintStart_toStartOf="@+id/tvRunningTime"
             app:layout_constraintTop_toBottomOf="@+id/tvRunningTime" />
 
+        <ToggleButton
+            android:id="@+id/tbFavorite"
+            android:button="@android:drawable/btn_star"
+            android:background="@android:color/transparent"
+            android:textOn=""
+            android:textOff=""
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="@+id/tvRating"
+            app:layout_constraintTop_toBottomOf="@+id/tvRating" />
+
         <TextView
             android:id="@+id/tvPlotSynopsis"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_marginStart="8dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
             android:textAlignment="viewStart"
             app:layout_constraintEnd_toEndOf="@+id/tvTitle"
