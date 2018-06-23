@@ -52,21 +52,13 @@
             app:layout_constraintTop_toBottomOf="@+id/tvTitle" />
 
         <TextView
-            android:id="@+id/tvRunningTime"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="18sp"
-            android:textStyle="italic"
-            app:layout_constraintStart_toStartOf="@+id/tvReleaseYear"
-            app:layout_constraintTop_toBottomOf="@+id/tvReleaseYear" />
-
-        <TextView
             android:id="@+id/tvRating"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
             android:textSize="14sp"
-            app:layout_constraintStart_toStartOf="@+id/tvRunningTime"
-            app:layout_constraintTop_toBottomOf="@+id/tvRunningTime" />
+            app:layout_constraintStart_toStartOf="@+id/tvReleaseYear"
+            app:layout_constraintTop_toBottomOf="@+id/tvReleaseYear" />
 
         <ToggleButton
             android:id="@+id/tbFavorite"
