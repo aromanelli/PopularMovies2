@@ -5,4 +5,7 @@
     <color name="colorAccent">#FF4081</color>
 
     <color name="black_overlay">#66000000</color>
+
+    <color name="movie_detail_title_back">#009688</color>
+    <color name="movie_detail_title_fore">#FFFFFF</color>
 </resources>

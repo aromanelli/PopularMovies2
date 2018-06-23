@@ -11,87 +11,72 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <ImageView
-            android:id="@+id/movie_poster_iv"
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/tvTitle"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:adjustViewBounds="true"
-            android:contentDescription="@string/movie_poster_image"
-            android:padding="1dp"
+            android:background="@color/movie_detail_title_back"
+            android:textColor="@color/movie_detail_title_fore"
+            android:textSize="36sp"
+            android:paddingTop="32dp"
+            android:paddingBottom="32dp"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/descTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:text="@string/desc_title"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/movie_poster_iv" />
-
-        <TextView
-            android:id="@+id/textTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            app:layout_constraintBottom_toBottomOf="@+id/descTitle"
-            app:layout_constraintStart_toEndOf="@+id/descVoteAvg"
-            app:layout_constraintTop_toTopOf="@+id/descTitle" />
-
-        <TextView
-            android:id="@+id/descReleaseDate"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="@string/desc_rel_date"
-            app:layout_constraintStart_toStartOf="@+id/descTitle"
-            app:layout_constraintTop_toBottomOf="@+id/descTitle" />
-
-        <TextView
-            android:id="@+id/textReleaseDate"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            app:layout_constraintBottom_toBottomOf="@+id/descReleaseDate"
-            app:layout_constraintStart_toEndOf="@+id/descVoteAvg"
-            app:layout_constraintTop_toTopOf="@+id/descReleaseDate" />
-
-        <TextView
-            android:id="@+id/descVoteAvg"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="@string/desc_vote_avg"
-            app:layout_constraintStart_toStartOf="@+id/descReleaseDate"
-            app:layout_constraintTop_toBottomOf="@+id/descReleaseDate" />
-
-        <TextView
-            android:id="@+id/textVoteAvg"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            app:layout_constraintBottom_toBottomOf="@+id/descVoteAvg"
-            app:layout_constraintStart_toEndOf="@+id/descVoteAvg"
-            app:layout_constraintTop_toTopOf="@+id/descVoteAvg" />
-
-        <TextView
-            android:id="@+id/textPlotSynopsis"
+        <ImageView
+            android:id="@+id/ivMoviePoster"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:adjustViewBounds="true"
+            android:contentDescription="@string/movie_poster_image"
+            android:padding="1dp"
+            app:layout_constraintStart_toStartOf="@+id/tvTitle"
+            app:layout_constraintTop_toBottomOf="@+id/tvTitle" />
+
+        <TextView
+            android:id="@+id/tvReleaseYear"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
+            android:layout_marginTop="16dp"
+            android:textSize="24sp"
+            app:layout_constraintEnd_toEndOf="@+id/tvTitle"
+            app:layout_constraintStart_toEndOf="@+id/ivMoviePoster"
+            app:layout_constraintTop_toBottomOf="@+id/tvTitle" />
+
+        <TextView
+            android:id="@+id/tvRunningTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:textStyle="italic"
+            app:layout_constraintStart_toStartOf="@+id/tvReleaseYear"
+            app:layout_constraintTop_toBottomOf="@+id/tvReleaseYear" />
+
+        <TextView
+            android:id="@+id/tvRating"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="@+id/tvRunningTime"
+            app:layout_constraintTop_toBottomOf="@+id/tvRunningTime" />
+
+        <TextView
+            android:id="@+id/tvPlotSynopsis"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:textAlignment="viewStart"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/descVoteAvg"
-            app:layout_constraintTop_toBottomOf="@+id/descVoteAvg" />
+            app:layout_constraintEnd_toEndOf="@+id/tvTitle"
+            app:layout_constraintStart_toStartOf="@+id/tvTitle"
+            app:layout_constraintTop_toBottomOf="@+id/ivMoviePoster" />
 
 
     </android.support.constraint.ConstraintLayout>

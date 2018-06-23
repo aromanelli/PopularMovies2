@@ -2,14 +2,18 @@ package info.romanelli.udacity.android.popularmovies.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 import java.util.Objects;
 
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "WeakerAccess"})
 public class MovieInfo implements Parcelable {
 
     final static private String TAG = MovieInfo.class.getSimpleName();
@@ -54,7 +58,7 @@ public class MovieInfo implements Parcelable {
     private String overview;
 
     @SerializedName("release_date")
-    private String releaseDate;
+    private Date releaseDate;
 
     @SuppressWarnings("WeakerAccess")
     protected MovieInfo(Parcel in) {
@@ -71,7 +75,7 @@ public class MovieInfo implements Parcelable {
         backdropPath = in.readString();
         adult = in.readByte() != 0;
         overview = in.readString();
-        releaseDate = in.readString();
+        releaseDate = new Date(in.readLong());
     }
 
     // Used by DetailActivity after it makes calls to fetch the data ...
@@ -198,12 +202,23 @@ public class MovieInfo implements Parcelable {
         this.overview = overview;
     }
 
-    public String getReleaseDate() {
+    public Date getReleaseDate() {
         return releaseDate;
     }
 
-    public void setReleaseDate(String releaseDate) {
+    public void setReleaseDate(Date releaseDate) {
         this.releaseDate = releaseDate;
+    }
+
+    public String getReleaseDateYearText() {
+        Log.d(TAG, "getReleaseDateYear() called: ["+ getReleaseDate() +"]");
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(getReleaseDate());
+        return String.valueOf(cal.get(Calendar.YEAR));
+    }
+
+    public String getVoteAverageText() {
+        return String.format(Locale.getDefault(), "%s", getVoteAverage());
     }
 
     @Override
@@ -272,6 +287,6 @@ public class MovieInfo implements Parcelable {
         dest.writeString(backdropPath);
         dest.writeByte((byte) (adult ? 1 : 0));
         dest.writeString(overview);
-        dest.writeString(releaseDate);
+        dest.writeLong(releaseDate.getTime());
     }
 }

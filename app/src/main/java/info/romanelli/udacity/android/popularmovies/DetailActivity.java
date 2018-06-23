@@ -8,7 +8,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -27,19 +26,19 @@ public class DetailActivity
 
     final static String KEY_BUNDLE_MOVIEINFO = "keyBundleMovieInfo";
 
-    @BindView(R.id.movie_poster_iv)
+    @BindView(R.id.ivMoviePoster)
     ImageView mPoster;
 
-    @BindView(R.id.textTitle)
+    @BindView(R.id.tvTitle)
     TextView mTitle;
 
-    @BindView(R.id.textReleaseDate)
-    TextView mReleaseDate;
+    @BindView(R.id.tvReleaseYear)
+    TextView mReleaseYear;
 
-    @BindView(R.id.textVoteAvg)
+    @BindView(R.id.tvRating)
     TextView mVoteAverage;
 
-    @BindView(R.id.textPlotSynopsis)
+    @BindView(R.id.tvPlotSynopsis)
     TextView mPlotSynopsis;
 
     @Override
@@ -80,10 +79,8 @@ public class DetailActivity
 
         // Set the main info (not videos/reviews) to the UI widgets ...
         mTitle.setText(movieInfo.getTitle());
-        mReleaseDate.setText(movieInfo.getReleaseDate());
-        mVoteAverage.setText(
-                String.format(Locale.getDefault(), "%s", movieInfo.getVoteAverage())
-        );
+        mReleaseYear.setText(movieInfo.getReleaseDateYearText());
+        mVoteAverage.setText(movieInfo.getVoteAverageText());
         mPlotSynopsis.setText(movieInfo.getOverview());
     }
 
