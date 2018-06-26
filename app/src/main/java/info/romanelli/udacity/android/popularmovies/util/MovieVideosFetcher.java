@@ -9,8 +9,8 @@ import com.google.gson.annotations.SerializedName;
 import java.util.ArrayList;
 
 import info.romanelli.udacity.android.popularmovies.BuildConfig;
-import info.romanelli.udacity.android.popularmovies.model.MovieInfo;
-import info.romanelli.udacity.android.popularmovies.model.MovieVideosInfo;
+import info.romanelli.udacity.android.popularmovies.network.MovieInfo;
+import info.romanelli.udacity.android.popularmovies.network.MovieVideosInfo;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.http.GET;

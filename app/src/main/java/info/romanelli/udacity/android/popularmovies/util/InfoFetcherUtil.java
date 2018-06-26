@@ -16,7 +16,7 @@ import com.squareup.picasso.Picasso;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import info.romanelli.udacity.android.popularmovies.R;
-import info.romanelli.udacity.android.popularmovies.model.MovieInfo;
+import info.romanelli.udacity.android.popularmovies.network.MovieInfo;
 
 public class InfoFetcherUtil {
 

@@ -1,4 +1,4 @@
-package info.romanelli.udacity.android.popularmovies.model;
+package info.romanelli.udacity.android.popularmovies.network;
 
 import android.support.annotation.NonNull;
 import android.support.v4.view.ViewCompat;

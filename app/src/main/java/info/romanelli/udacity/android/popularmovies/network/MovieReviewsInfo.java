@@ -1,4 +1,4 @@
-package info.romanelli.udacity.android.popularmovies.model;
+package info.romanelli.udacity.android.popularmovies.network;
 
 import android.os.Parcel;
 import android.os.Parcelable;

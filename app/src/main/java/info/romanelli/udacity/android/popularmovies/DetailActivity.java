@@ -13,9 +13,9 @@ import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import info.romanelli.udacity.android.popularmovies.model.MovieInfo;
-import info.romanelli.udacity.android.popularmovies.model.MovieReviewsInfo;
-import info.romanelli.udacity.android.popularmovies.model.MovieVideosInfo;
+import info.romanelli.udacity.android.popularmovies.network.MovieInfo;
+import info.romanelli.udacity.android.popularmovies.network.MovieReviewsInfo;
+import info.romanelli.udacity.android.popularmovies.network.MovieVideosInfo;
 import info.romanelli.udacity.android.popularmovies.util.InfoFetcherUtil;
 import info.romanelli.udacity.android.popularmovies.util.MovieReviewsFetcher;
 import info.romanelli.udacity.android.popularmovies.util.MovieVideosFetcher;
