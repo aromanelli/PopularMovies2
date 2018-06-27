@@ -10,9 +10,9 @@ public class MovieModel extends ViewModel {
 
     private final LiveData<MovieEntry> movieEntry;
 
-    MovieModel(AppDatabase appDb, int movieId) { // NOT by 'id' !
-        Log.d(TAG, "MovieModel() called with: appDb = [" + appDb + "], movieId = [" + movieId + "]");
-        this.movieEntry = appDb.movieDao().getMovieByMovieId(movieId);
+    MovieModel(AppDatabase appDb, int id) {
+        Log.d(TAG, "MovieModel() called with: appDb = [" + appDb + "], id = [" + id + "]");
+        this.movieEntry = appDb.movieDao().getMovieById(id);
         Log.d(TAG, "MovieModel: movieEntry: " + movieEntry);
         Log.d(TAG, "MovieModel: movieEntry.value: " + movieEntry.getValue());
     }

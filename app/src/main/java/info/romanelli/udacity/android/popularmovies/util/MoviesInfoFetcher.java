@@ -6,6 +6,8 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.SerializedName;
 
 import java.net.URL;
@@ -34,28 +36,45 @@ public class MoviesInfoFetcher extends AbstractFetcher {
                 listener + "], moviesInfoType = [" + moviesInfoType + "]");
 
         if (MoviesInfoType.FAVORITES.equals(moviesInfoType)) {
+
+            /////////////////////////////////////////
             // Need to use locally stored (in DB) ...
+            /////////////////////////////////////////
+
             AppDatabase.$(activity.getApplicationContext()).movieDao().getAllMovies().observe(
                     activity,
                     new Observer<List<MovieEntry>>() {
                         @Override
                         public void onChanged(@Nullable List<MovieEntry> movieEntries) {
                             Log.d(TAG, "onChanged() called with: movieEntries = [" + movieEntries + "]");
+
+                            // Stop listening for changes, now that we've received the data ...
                             AppDatabase.$(activity.getApplicationContext()).movieDao().getAllMovies().removeObserver(this);
 
-
-                            /////////////////////////////////////////////
-                            // TODO AOR Code setting list of favorites, instead of new ArrayList!!!
-                            /////////////////////////////////////////////
-
-                            listener.fetchedMoviesInfo(new ArrayList<MovieInfo>(0));
+                            // Deserialize the previously saved MovieInfo(MovieEntry) entries ...
+                            // (Serialization done in DetailActivity, off the favorites button.)
+                            final ArrayList<MovieInfo> list;
+                            if (movieEntries != null && (movieEntries.size() >= 1)) {
+                                final Gson gson = new GsonBuilder().create();
+                                list = new ArrayList<>(movieEntries.size());
+                                for (MovieEntry me : movieEntries) {
+                                    list.add(gson.fromJson(me.getJson(), MovieInfo.class));
+                                }
+                                listener.fetchedMoviesInfo(list);
+                            }
+                            else {
+                                // No favorites, so set the model for the view to an empty list ...
+                                listener.fetchedMoviesInfo(new ArrayList<MovieInfo>(0));
+                            }
                         }
                     }
             );
         }
         else {
 
+            ///////////////////////////////////////
             // Need to call out to the Internet ...
+            ///////////////////////////////////////
 
             if (InfoFetcherUtil.isOnline(activity)) {
                 Log.d(TAG, "fetchMoviesInfo(): Online; starting Retrofit process for list type [" +

@@ -12,6 +12,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
+import com.google.gson.GsonBuilder;
+
 import java.util.ArrayList;
 
 import butterknife.BindView;
@@ -108,7 +110,7 @@ public class DetailActivity
                 Log.d(TAG, "onChanged() called with: movieEntry = [" + movieEntry + "]["+ model.getMovieEntry().getValue() +"]");
                 model.getMovieEntry().removeObserver(this); // No external changes, so no need to listen further
                 // We only save favorite'd recs to the db, so if no entry, not a favorite ...
-                mFavorite.setChecked((movieEntry != null) && movieEntry.isFavorite());
+                mFavorite.setChecked( movieEntry != null );
             }
         });
         // Listen for the user clicking on the favorites control ...
@@ -116,14 +118,22 @@ public class DetailActivity
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "onClick() called: [" + mFavorite.isChecked() + "]");
+                // TODO AOR Disable the button until the execute is done?
                 AppExecutors.$().diskIO().execute(new Runnable() {
                     @Override
                     public void run() {
-                        // We only save favorite'd recs to the db, to conserve resources ...
+                        // We only save favorites to the db, to conserve resources,
+                        // so first, we delete the old record, no matter what ...
+                        if (model.getMovieEntry().getValue() != null) { // First time it will be null
+                            Log.d(TAG, "onClick() called; deleting movieEntry = [" + model.getMovieEntry().getValue() + "]");
+                            AppDatabase.$(getApplicationContext()).movieDao()
+                                    .deleteMovie(model.getMovieEntry().getValue());
+                        }
+                        // ... and then if the user has pressed the favorite, we add it to the db ...
                         if (mFavorite.isChecked()) {
                             MovieEntry entry = new MovieEntry(
-                                    movieInfo.getId(),
-                                    mFavorite.isChecked()
+                                    movieInfo.getId(), // MovieInfo id, NOT MovieEntry id!
+                                    new GsonBuilder().create().toJson(movieInfo)
                             );
                             // @Insert is OnConflictStrategy.REPLACE so will not duplicate records,
                             // BUT!, WILL change 'id' of record to a different value (old rec del)!
@@ -132,11 +142,6 @@ public class DetailActivity
                                     .insertMovie(entry);
                             Log.d(TAG, "onClick() called: newId: " + newId);
                             Log.d(TAG, "onClick() called; inserted movieEntry = ["+ entry +"]["+ model.getMovieEntry().getValue() +"]");
-                        }
-                        else {
-                            Log.d(TAG, "onClick() called; deleting movieEntry = ["+ model.getMovieEntry().getValue() +"]");
-                            AppDatabase.$(getApplicationContext()).movieDao()
-                                    .deleteMovie(model.getMovieEntry().getValue());
                         }
                     }
                 });

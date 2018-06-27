@@ -15,7 +15,7 @@ import static info.romanelli.udacity.android.popularmovies.database.MovieEntry.T
 @Dao
 public interface MovieDao {
 
-    @Query("SELECT * FROM "+ TABLE_NAME_FAV_MOVIES +" ORDER BY movie_id")
+    @Query("SELECT * FROM "+ TABLE_NAME_FAV_MOVIES +" ORDER BY id")
     LiveData<List<MovieEntry>> getAllMovies();
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -29,8 +29,5 @@ public interface MovieDao {
 
     @Query("SELECT * FROM "+ TABLE_NAME_FAV_MOVIES +" WHERE id = :id")
     LiveData<MovieEntry> getMovieById(int id);
-
-    @Query("SELECT * FROM "+ TABLE_NAME_FAV_MOVIES +" WHERE movie_id = :movieId")
-    LiveData<MovieEntry> getMovieByMovieId(int movieId);
 
 }

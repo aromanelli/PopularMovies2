@@ -12,27 +12,17 @@ public class MovieEntry {
 
     final static String TABLE_NAME_FAV_MOVIES = "fav_movies";
 
+    @SuppressWarnings("DefaultAnnotationParam")
     @ColumnInfo(name = "id")
-    @PrimaryKey(autoGenerate = true)
+    @PrimaryKey(autoGenerate = false) // We supply value, same as MovieInfo.id
     private int id;
 
-    @ColumnInfo(name = "movie_id")
-    private int movieId;
+    @ColumnInfo(name = "json")
+    private String json;
 
-    @ColumnInfo(name = "favorite")
-    private boolean favorite = false;
-
-    @Ignore
-    public MovieEntry(int movieId, boolean favorite) {
-        // this.id = Integer.MIN_VALUE; BAD! Breaks Room; leave unassigned!
-        this.movieId = movieId;
-        this.favorite = favorite;
-    }
-
-    MovieEntry(int id, int movieId, boolean favorite) {
+    public MovieEntry(int id, String json) {
         this.id = id;
-        this.movieId = movieId;
-        this.favorite = favorite;
+        this.json = json;
     }
 
     public int getId() {
@@ -43,20 +33,12 @@ public class MovieEntry {
         this.id = id;
     }
 
-    public int getMovieId() {
-        return movieId;
+    public String getJson() {
+        return json;
     }
 
-    public void setMovieId(int movieId) {
-        this.movieId = movieId;
-    }
-
-    public boolean isFavorite() {
-        return favorite;
-    }
-
-    public void setFavorite(boolean favorite) {
-        this.favorite = favorite;
+    public void setJson(String json) {
+        this.json = json;
     }
 
     @Ignore
@@ -64,8 +46,7 @@ public class MovieEntry {
     public String toString() {
         return "MovieEntry{" +
                 "id=" + id +
-                ", movieId=" + movieId +
-                ", favorite=" + favorite +
+                ", json=" + json +
                 '}';
     }
 }

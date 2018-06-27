@@ -7,18 +7,19 @@ import android.support.annotation.NonNull;
 public class MovieModelFactory extends ViewModelProvider.NewInstanceFactory {
 
     private AppDatabase appDb;
-    private int movieId;
+    private int id; // Not auto-generated; we supply same value as MOvieInfo.id!
 
-    public MovieModelFactory(AppDatabase appDb, int movieId) { // NOT by 'id' !
+    // We supply 'id' so that it is the same value as MovieInfo.id!
+    public MovieModelFactory(AppDatabase appDb, int id) {
         this.appDb = appDb;
-        this.movieId = movieId;
+        this.id = id;
     }
 
     @NonNull
     @Override
     public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
         //noinspection unchecked
-        return (T) new MovieModel(appDb, movieId);
+        return (T) new MovieModel(appDb, id);
     }
 
 }
