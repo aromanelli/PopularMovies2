@@ -1,15 +1,20 @@
 package info.romanelli.udacity.android.popularmovies.util;
 
-import android.content.Context;
+import android.arch.lifecycle.Observer;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
 import com.google.gson.annotations.SerializedName;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 
 import info.romanelli.udacity.android.popularmovies.BuildConfig;
+import info.romanelli.udacity.android.popularmovies.database.AppDatabase;
+import info.romanelli.udacity.android.popularmovies.database.MovieEntry;
 import info.romanelli.udacity.android.popularmovies.network.MovieInfo;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -21,52 +26,78 @@ public class MoviesInfoFetcher extends AbstractFetcher {
 
     final static private String TAG = MoviesInfoFetcher.class.getSimpleName();
 
-    synchronized static public void fetchMoviesInfo( final Context context,
+    synchronized static public void fetchMoviesInfo( final AppCompatActivity activity,
                                                      final MoviesInfoFetcher.Listener listener,
                                                      final MoviesInfoType moviesInfoType ) {
 
-        Log.d(TAG, "fetchMoviesInfo() called with: context = [" + context + "], listener = [" +
+        Log.d(TAG, "fetchMoviesInfo() called with: activity = [" + activity + "], listener = [" +
                 listener + "], moviesInfoType = [" + moviesInfoType + "]");
 
-        if (InfoFetcherUtil.isOnline(context)) {
-            Log.d(TAG, "fetchMoviesInfo(): Online; starting Retrofit process for list type ["+
-                    moviesInfoType +"] ...");
+        if (MoviesInfoType.FAVORITES.equals(moviesInfoType)) {
+            // Need to use locally stored (in DB) ...
+            AppDatabase.$(activity.getApplicationContext()).movieDao().getAllMovies().observe(
+                    activity,
+                    new Observer<List<MovieEntry>>() {
+                        @Override
+                        public void onChanged(@Nullable List<MovieEntry> movieEntries) {
+                            Log.d(TAG, "onChanged() called with: movieEntries = [" + movieEntries + "]");
+                            AppDatabase.$(activity.getApplicationContext()).movieDao().getAllMovies().removeObserver(this);
 
-            // Call instance can be exec'd only once!
-            Call<MoviesInfoFetcher.Response> call =
-                    RETROFIT.create(MoviesInfoFetcher.Service.class)
-                            .fetchMoviesInfo(
-                                    moviesInfoType.getURL(),
-                                    // https://medium.com/code-better/hiding-api-keys-from-your-android-repository-b23f5598b906
-                                    // https://stackoverflow.com/a/34021467/435519 (option #2)
-                                    //    https://stackoverflow.com/questions/33134031/is-there-a-safe-way-to-manage-api-keys
-                                    BuildConfig.ApiKey_TheMovieDB
-                            );
-            Log.d(TAG, "fetchMoviesInfo(): enqueue; Uri for list of movies: ["+ call.request().url() +"]");
-            call.enqueue(new Callback<MoviesInfoFetcher.Response>() {
-                @Override
-                public void onResponse(
-                        @NonNull final Call<MoviesInfoFetcher.Response> call,
-                        @NonNull final retrofit2.Response<MoviesInfoFetcher.Response> response) {
-                    Log.d(TAG, "onResponse: body: " + response.body());
-                    if (response.body() != null) {
-                        //noinspection ConstantConditions
-                        listener.fetchedMoviesInfo( response.body().getMoviesInfo() );
-                    }
-                    else {
-                        Log.e(TAG, "onResponse: No response body was returned!");
-                    }
-                }
-                @Override
-                public void onFailure(
-                        @NonNull final Call<MoviesInfoFetcher.Response> call,
-                        @NonNull final Throwable t) {
-                    Log.e(TAG, "onFailure: ", t);
-                }
-            });
 
-        } else {
-            Log.w(TAG, "fetchMoviesInfo: Not online, so cannot do fetching; aborting!");
+                            /////////////////////////////////////////////
+                            // TODO AOR Code setting list of favorites, instead of new ArrayList!!!
+                            /////////////////////////////////////////////
+
+                            listener.fetchedMoviesInfo(new ArrayList<MovieInfo>(0));
+                        }
+                    }
+            );
+        }
+        else {
+
+            // Need to call out to the Internet ...
+
+            if (InfoFetcherUtil.isOnline(activity)) {
+                Log.d(TAG, "fetchMoviesInfo(): Online; starting Retrofit process for list type [" +
+                        moviesInfoType + "] ...");
+
+                // Call instance can be exec'd only once!
+                Call<MoviesInfoFetcher.Response> call =
+                        RETROFIT.create(MoviesInfoFetcher.Service.class)
+                                .fetchMoviesInfo(
+                                        moviesInfoType.getURL(),
+                                        // https://medium.com/code-better/hiding-api-keys-from-your-android-repository-b23f5598b906
+                                        // https://stackoverflow.com/a/34021467/435519 (option #2)
+                                        //    https://stackoverflow.com/questions/33134031/is-there-a-safe-way-to-manage-api-keys
+                                        BuildConfig.ApiKey_TheMovieDB
+                                );
+                Log.d(TAG, "fetchMoviesInfo(): enqueue; Uri for list of movies: [" + call.request().url() + "]");
+                call.enqueue(new Callback<MoviesInfoFetcher.Response>() {
+                    @Override
+                    public void onResponse(
+                            @NonNull final Call<MoviesInfoFetcher.Response> call,
+                            @NonNull final retrofit2.Response<MoviesInfoFetcher.Response> response) {
+                        Log.d(TAG, "onResponse: body: " + response.body());
+                        if (response.body() != null) {
+                            //noinspection ConstantConditions
+                            listener.fetchedMoviesInfo(response.body().getMoviesInfo());
+                        } else {
+                            Log.e(TAG, "onResponse: No response body was returned!");
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(
+                            @NonNull final Call<MoviesInfoFetcher.Response> call,
+                            @NonNull final Throwable t) {
+                        Log.e(TAG, "onFailure: ", t);
+                    }
+                });
+
+            }
+            else {
+                Log.w(TAG, "fetchMoviesInfo: Not online, so cannot do fetching; aborting!");
+            }
         }
     }
 

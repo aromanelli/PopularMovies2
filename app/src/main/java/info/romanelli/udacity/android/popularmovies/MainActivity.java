@@ -135,34 +135,23 @@ public class MainActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        switch (id) {
+
+        switch (item.getItemId()) {
             case R.id.menu_top_rated:
                 typeMoviesList = MoviesInfoFetcher.MoviesInfoType.TOP_RATED;
-                MoviesInfoFetcher.fetchMoviesInfo(
-                        this, this, typeMoviesList);
                 break;
             case R.id.menu_popular:
                 typeMoviesList = MoviesInfoFetcher.MoviesInfoType.POPULAR;
-                MoviesInfoFetcher.fetchMoviesInfo(
-                        this, this, typeMoviesList);
                 break;
             case R.id.menu_favorites:
                 typeMoviesList = MoviesInfoFetcher.MoviesInfoType.FAVORITES;
-
-
-
-
-                // TODO AOR Code setting list of favorites, either via a call
-                // to fetchedMoviesInfo, or mAdapterMovieInfo.setDataMovieInfo
-
-
-
-
                 break;
             default:
-                Log.e(TAG, "onOptionsItemSelected: Unknown options item id! ["+ id +"]" );
+                Log.e(TAG, "onOptionsItemSelected: Unknown options item id! ["+ item.getItemId() +"]");
+                return true; // consume, don't continue
         }
+
+        MoviesInfoFetcher.fetchMoviesInfo(this, this, typeMoviesList);
 
         invalidateOptionsMenu(); // Android 3.0+ needs this to re-call onPrepareOptionsMenu
         return super.onOptionsItemSelected(item);
