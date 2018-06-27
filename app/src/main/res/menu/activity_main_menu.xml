@@ -9,4 +9,8 @@
         android:id="@+id/menu_popular"
         android:title="@string/menu_popular"
         android:orderInCategory="2"/> <!-- Needed for MainActivity.onPrepareOptionsMenu(Menu) -->
+    <item
+        android:id="@+id/menu_favorites"
+        android:title="@string/menu_favorite"
+        android:orderInCategory="3"/> <!-- Needed for MainActivity.onPrepareOptionsMenu(Menu) -->
 </menu>

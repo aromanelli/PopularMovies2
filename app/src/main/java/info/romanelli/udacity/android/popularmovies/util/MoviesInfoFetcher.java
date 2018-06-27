@@ -72,7 +72,8 @@ public class MoviesInfoFetcher extends AbstractFetcher {
 
     public enum MoviesInfoType {
         POPULAR ("popular"),
-        TOP_RATED ("top_rated");
+        TOP_RATED ("top_rated"),
+        FAVORITES (""); // No URL/call for favorites type
         final private String typeURLPartial;
         MoviesInfoType(String typeURLPartial) {
             this.typeURLPartial = typeURLPartial;

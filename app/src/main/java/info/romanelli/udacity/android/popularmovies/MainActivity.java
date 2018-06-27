@@ -65,7 +65,7 @@ public class MainActivity
         if ( (savedInstanceState == null) ||
                 (!savedInstanceState.containsKey(DetailActivity.KEY_BUNDLE_MOVIEINFO))) {
             MoviesInfoFetcher.fetchMoviesInfo(
-                    this, this, MoviesInfoFetcher.MoviesInfoType.POPULAR );
+                    this, this, typeMoviesList );
         }
         else {
             // Re-create from rotation, reload previously saved movie info data ...
@@ -110,14 +110,21 @@ public class MainActivity
     public boolean onPrepareOptionsMenu(Menu menu) {
         // Disable menu that was selected, enable other menu ...
         switch(typeMoviesList) {
-            // For getItem index value see menu xml's orderInCategory values
-            case POPULAR:
-                menu.getItem(0).setEnabled(true);
-                menu.getItem(1).setEnabled(false);
-                break;
+            // For getItem index value see activity_main_menu.xml's orderInCategory values
             case TOP_RATED:
                 menu.getItem(0).setEnabled(false);
                 menu.getItem(1).setEnabled(true);
+                menu.getItem(2).setEnabled(true);
+                break;
+            case POPULAR:
+                menu.getItem(0).setEnabled(true);
+                menu.getItem(1).setEnabled(false);
+                menu.getItem(2).setEnabled(true);
+                break;
+            case FAVORITES:
+                menu.getItem(0).setEnabled(true);
+                menu.getItem(1).setEnabled(true);
+                menu.getItem(2).setEnabled(false);
                 break;
             default:
                 Log.e(TAG, "onPrepareOptionsMenu: Unknown movies list type! ["+ typeMoviesList +"]" );
@@ -139,6 +146,19 @@ public class MainActivity
                 typeMoviesList = MoviesInfoFetcher.MoviesInfoType.POPULAR;
                 MoviesInfoFetcher.fetchMoviesInfo(
                         this, this, typeMoviesList);
+                break;
+            case R.id.menu_favorites:
+                typeMoviesList = MoviesInfoFetcher.MoviesInfoType.FAVORITES;
+
+
+
+
+                // TODO AOR Code setting list of favorites, either via a call
+                // to fetchedMoviesInfo, or mAdapterMovieInfo.setDataMovieInfo
+
+
+
+
                 break;
             default:
                 Log.e(TAG, "onOptionsItemSelected: Unknown options item id! ["+ id +"]" );
@@ -167,6 +187,9 @@ public class MainActivity
                 break;
             case TOP_RATED:
                 setTitle(getResources().getString(R.string.app_title_top_rated));
+                break;
+            case FAVORITES:
+                setTitle(getResources().getString(R.string.app_title_favorites));
                 break;
             default:
                 Log.e(TAG, "fetched: Unknown movies list type! ["+ typeMoviesList +"]" );
