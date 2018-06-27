@@ -1,7 +1,10 @@
 package info.romanelli.udacity.android.popularmovies;
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -13,6 +16,10 @@ import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import info.romanelli.udacity.android.popularmovies.database.AppDatabase;
+import info.romanelli.udacity.android.popularmovies.database.MovieEntry;
+import info.romanelli.udacity.android.popularmovies.database.MovieModel;
+import info.romanelli.udacity.android.popularmovies.database.MovieModelFactory;
 import info.romanelli.udacity.android.popularmovies.network.MovieInfo;
 import info.romanelli.udacity.android.popularmovies.network.MovieReviewsInfo;
 import info.romanelli.udacity.android.popularmovies.network.MovieVideosInfo;
@@ -87,13 +94,52 @@ public class DetailActivity
         mReleaseYear.setText(movieInfo.getReleaseDateYearText());
         mVoteAverage.setText(movieInfo.getVoteAverageText());
 
+        // Set the favorites flag, as well as its click listener ...
+        final MovieModel model = ViewModelProviders.of(
+                this,
+                new MovieModelFactory(
+                        AppDatabase.$(getApplicationContext()),
+                        movieInfo.getId()
+                )
+            ).get(MovieModel.class);
+        model.getMovieEntry().observe(this, new Observer<MovieEntry>() {
+            @Override
+            public void onChanged(@Nullable MovieEntry movieEntry) {
+                Log.d(TAG, "onChanged() called with: movieEntry = [" + movieEntry + "]["+ model.getMovieEntry().getValue() +"]");
+                model.getMovieEntry().removeObserver(this); // No external changes, so no need to listen further
+                // We only save favorite'd recs to the db, so if no entry, not a favorite ...
+                mFavorite.setChecked((movieEntry != null) && movieEntry.isFavorite());
+            }
+        });
+        // Listen for the user clicking on the favorites control ...
         mFavorite.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "onClick() called: [" + mFavorite.isChecked() + "]");
-                if (mFavorite.isChecked()) {
-                    // TODO AOR Implement 'Favorites' functionality!
-                }
+                AppExecutors.$().diskIO().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        // We only save favorite'd recs to the db, to conserve resources ...
+                        if (mFavorite.isChecked()) {
+                            MovieEntry entry = new MovieEntry(
+                                    movieInfo.getId(),
+                                    mFavorite.isChecked()
+                            );
+                            // @Insert is OnConflictStrategy.REPLACE so will not duplicate records,
+                            // BUT!, WILL change 'id' of record to a different value (old rec del)!
+                            Log.d(TAG, "onClick() called; inserting movieEntry = ["+ entry +"]["+ model.getMovieEntry().getValue() +"]");
+                            long newId = AppDatabase.$(getApplicationContext()).movieDao()
+                                    .insertMovie(entry);
+                            Log.d(TAG, "onClick() called: newId: " + newId);
+                            Log.d(TAG, "onClick() called; inserted movieEntry = ["+ entry +"]["+ model.getMovieEntry().getValue() +"]");
+                        }
+                        else {
+                            Log.d(TAG, "onClick() called; deleting movieEntry = ["+ model.getMovieEntry().getValue() +"]");
+                            AppDatabase.$(getApplicationContext()).movieDao()
+                                    .deleteMovie(model.getMovieEntry().getValue());
+                        }
+                    }
+                });
             }
         });
 
