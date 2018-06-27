@@ -10,7 +10,7 @@ import static info.romanelli.udacity.android.popularmovies.database.MovieEntry.T
 @Entity(tableName = TABLE_NAME_FAV_MOVIES)
 public class MovieEntry {
 
-    final static protected String TABLE_NAME_FAV_MOVIES = "fav_movies";
+    final static String TABLE_NAME_FAV_MOVIES = "fav_movies";
 
     @ColumnInfo(name = "id")
     @PrimaryKey(autoGenerate = true)
