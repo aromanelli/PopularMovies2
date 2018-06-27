@@ -10,10 +10,12 @@ import android.arch.persistence.room.Update;
 
 import java.util.List;
 
+import static info.romanelli.udacity.android.popularmovies.database.MovieEntry.TABLE_NAME_FAV_MOVIES;
+
 @Dao
 public interface MovieDao {
 
-    @Query("SELECT * FROM movie ORDER BY movie_id")
+    @Query("SELECT * FROM "+ TABLE_NAME_FAV_MOVIES +" ORDER BY movie_id")
     LiveData<List<MovieEntry>> getAllMovies();
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -25,10 +27,10 @@ public interface MovieDao {
     @Delete
     void deleteMovie(MovieEntry taskEntry);
 
-    @Query("SELECT * FROM movie WHERE id = :id")
+    @Query("SELECT * FROM "+ TABLE_NAME_FAV_MOVIES +" WHERE id = :id")
     LiveData<MovieEntry> getMovieById(int id);
 
-    @Query("SELECT * FROM movie WHERE movie_id = :movieId")
+    @Query("SELECT * FROM "+ TABLE_NAME_FAV_MOVIES +" WHERE movie_id = :movieId")
     LiveData<MovieEntry> getMovieByMovieId(int movieId);
 
 }
