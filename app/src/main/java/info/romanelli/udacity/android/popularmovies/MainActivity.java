@@ -70,7 +70,7 @@ public class MainActivity
         else {
             // Re-create from rotation, reload previously saved movie info data ...
             listMovieInfo = savedInstanceState.getParcelableArrayList(DetailActivity.KEY_BUNDLE_MOVIEINFO);
-            mAdapterMovieInfo.setDataMovieInfo(listMovieInfo);
+            fetchedMoviesInfo(listMovieInfo);
         }
     }
 
