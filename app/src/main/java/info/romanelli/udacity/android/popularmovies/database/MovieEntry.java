@@ -5,6 +5,8 @@ import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 
+import java.util.Objects;
+
 import static info.romanelli.udacity.android.popularmovies.database.MovieEntry.TABLE_NAME_FAV_MOVIES;
 
 @Entity(tableName = TABLE_NAME_FAV_MOVIES)
@@ -39,6 +41,20 @@ public class MovieEntry {
 
     public void setJson(String json) {
         this.json = json;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        MovieEntry that = (MovieEntry) o;
+        return id == that.id;
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(id);
     }
 
     @Ignore
