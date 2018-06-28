@@ -14,6 +14,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import info.romanelli.udacity.android.popularmovies.AppExecutors;
 import info.romanelli.udacity.android.popularmovies.BuildConfig;
 import info.romanelli.udacity.android.popularmovies.database.AppDatabase;
 import info.romanelli.udacity.android.popularmovies.database.MovieEntry;
@@ -45,27 +46,37 @@ public class MoviesInfoFetcher extends AbstractFetcher {
                     activity,
                     new Observer<List<MovieEntry>>() {
                         @Override
-                        public void onChanged(@Nullable List<MovieEntry> movieEntries) {
-                            Log.d(TAG, "onChanged() called with: movieEntries = [" + movieEntries + "]");
+                        public void onChanged(@Nullable final List<MovieEntry> movieEntries) {
+                            Log.d(TAG, "onChanged() called with: movieEntries = [" + movieEntries + "] " + Thread.currentThread().getName());
 
                             // Stop listening for changes, now that we've received the data ...
                             AppDatabase.$(activity.getApplicationContext()).movieDao().getAllMovies().removeObserver(this);
 
-                            // Deserialize the previously saved MovieInfo(MovieEntry) entries ...
-                            // (Serialization done in DetailActivity, off the favorites button.)
-                            final ArrayList<MovieInfo> list;
-                            if (movieEntries != null && (movieEntries.size() >= 1)) {
-                                final Gson gson = new GsonBuilder().create();
-                                list = new ArrayList<>(movieEntries.size());
-                                for (MovieEntry me : movieEntries) {
-                                    list.add(gson.fromJson(me.getJson(), MovieInfo.class));
+                            AppExecutors.$().diskIO().execute(new Runnable() {
+                                @Override
+                                public void run() {
+                                    // Deserialize the previously saved MovieInfo(MovieEntry) entries ...
+                                    // (Serialization done in DetailActivity, off the favorites button.)
+                                    final ArrayList<MovieInfo> list;
+                                    if (movieEntries != null && (movieEntries.size() >= 1)) {
+                                        final Gson gson = new GsonBuilder().create();
+                                        list = new ArrayList<>(movieEntries.size());
+                                        for (MovieEntry me : movieEntries) {
+                                            list.add(gson.fromJson(me.getJson(), MovieInfo.class));
+                                        }
+                                    }
+                                    else {
+                                        // No favorites, so set the model for the view to an empty list ...
+                                        list = new ArrayList<>(0);
+                                    }
+                                    AppExecutors.$().mainThread().execute(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            listener.fetchedMoviesInfo(list);
+                                        }
+                                    });
                                 }
-                                listener.fetchedMoviesInfo(list);
-                            }
-                            else {
-                                // No favorites, so set the model for the view to an empty list ...
-                                listener.fetchedMoviesInfo(new ArrayList<MovieInfo>(0));
-                            }
+                            });
                         }
                     }
             );
