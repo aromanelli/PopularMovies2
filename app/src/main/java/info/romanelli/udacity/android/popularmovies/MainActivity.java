@@ -17,9 +17,9 @@ import java.util.ArrayList;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import info.romanelli.udacity.android.popularmovies.network.MovieInfo;
-import info.romanelli.udacity.android.popularmovies.network.MovieInfoAdapter;
-import info.romanelli.udacity.android.popularmovies.util.InfoFetcherUtil;
-import info.romanelli.udacity.android.popularmovies.util.MoviesInfoFetcher;
+import info.romanelli.udacity.android.popularmovies.network.MoviesInfoFetcher;
+import info.romanelli.udacity.android.popularmovies.util.AppUtil;
+import info.romanelli.udacity.android.popularmovies.util.MovieInfoAdapter;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -88,7 +88,7 @@ public class MainActivity
     public void onMovieClick(final MovieInfo movieInfo, final ImageView ivPoster) {
 
         // Call showToast early, as it has its own internal 'wait before show' timer ...
-        InfoFetcherUtil.showToast(this, getString(R.string.progress_retrieving));
+        AppUtil.showToast(this, getString(R.string.progress_retrieving));
 
         Intent intent = new Intent(this, DetailActivity.class);
         intent.putExtra(DetailActivity.KEY_BUNDLE_MOVIEINFO, movieInfo);

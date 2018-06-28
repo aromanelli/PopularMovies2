@@ -23,11 +23,12 @@ import info.romanelli.udacity.android.popularmovies.database.MovieEntry;
 import info.romanelli.udacity.android.popularmovies.database.MovieModel;
 import info.romanelli.udacity.android.popularmovies.database.MovieModelFactory;
 import info.romanelli.udacity.android.popularmovies.network.MovieInfo;
+import info.romanelli.udacity.android.popularmovies.network.MovieReviewsFetcher;
 import info.romanelli.udacity.android.popularmovies.network.MovieReviewsInfo;
+import info.romanelli.udacity.android.popularmovies.network.MovieVideosFetcher;
 import info.romanelli.udacity.android.popularmovies.network.MovieVideosInfo;
-import info.romanelli.udacity.android.popularmovies.util.InfoFetcherUtil;
-import info.romanelli.udacity.android.popularmovies.util.MovieReviewsFetcher;
-import info.romanelli.udacity.android.popularmovies.util.MovieVideosFetcher;
+import info.romanelli.udacity.android.popularmovies.util.AppExecutors;
+import info.romanelli.udacity.android.popularmovies.util.AppUtil;
 
 public class DetailActivity
         extends AppCompatActivity
@@ -72,7 +73,7 @@ public class DetailActivity
             populateUI( (MovieInfo) intent.getParcelableExtra(KEY_BUNDLE_MOVIEINFO) );
         }
         else {
-            InfoFetcherUtil.hideToast();
+            AppUtil.hideToast();
             finish();
             Log.e(TAG, "onCreate: Expected to receive a MovieInfo object!");
         }
@@ -187,12 +188,12 @@ public class DetailActivity
 
         Log.d(TAG, "finalizeUI() called with: movieInfo = [" + movieInfo + "]");
 
-        InfoFetcherUtil.hideToast();
+        AppUtil.hideToast();
 
         // TODO AOR Set the videos and reviews info into the UI
 
         // Display of this activity is postponed until code inside of setPosterToView is called!
-        InfoFetcherUtil.setPosterToView(this, movieInfo, mPoster);
+        AppUtil.setPosterToView(this, movieInfo, mPoster);
 
     }
 

@@ -18,9 +18,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import info.romanelli.udacity.android.popularmovies.R;
 import info.romanelli.udacity.android.popularmovies.network.MovieInfo;
 
-public class InfoFetcherUtil {
+public class AppUtil {
 
-    final static private String TAG = InfoFetcherUtil.class.getSimpleName();
+    final static private String TAG = AppUtil.class.getSimpleName();
 
     static public boolean isOnline(final Context context) {
         Log.d(TAG, "isOnline() called with: context = [" + context + "]");

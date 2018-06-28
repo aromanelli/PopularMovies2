@@ -1,4 +1,4 @@
-package info.romanelli.udacity.android.popularmovies.util;
+package info.romanelli.udacity.android.popularmovies.network;
 
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;

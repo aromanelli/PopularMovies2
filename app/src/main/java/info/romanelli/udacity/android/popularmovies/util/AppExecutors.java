@@ -1,4 +1,4 @@
-package info.romanelli.udacity.android.popularmovies;
+package info.romanelli.udacity.android.popularmovies.util;
 
 import android.os.Handler;
 import android.os.Looper;

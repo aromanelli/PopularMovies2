@@ -1,4 +1,4 @@
-package info.romanelli.udacity.android.popularmovies;
+package info.romanelli.udacity.android.popularmovies.util;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
@@ -15,7 +15,7 @@ import java.util.List;
 import info.romanelli.udacity.android.popularmovies.database.AppDatabase;
 import info.romanelli.udacity.android.popularmovies.database.MovieEntry;
 import info.romanelli.udacity.android.popularmovies.network.MovieInfo;
-import info.romanelli.udacity.android.popularmovies.util.MoviesInfoFetcher;
+import info.romanelli.udacity.android.popularmovies.network.MoviesInfoFetcher;
 
 public class FavMoviesObserver implements Observer<List<MovieEntry>> {
 

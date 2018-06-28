@@ -1,4 +1,4 @@
-package info.romanelli.udacity.android.popularmovies.network;
+package info.romanelli.udacity.android.popularmovies.util;
 
 import android.support.annotation.NonNull;
 import android.support.v4.view.ViewCompat;
@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import info.romanelli.udacity.android.popularmovies.R;
-import info.romanelli.udacity.android.popularmovies.util.InfoFetcherUtil;
+import info.romanelli.udacity.android.popularmovies.network.MovieInfo;
 
 public class MovieInfoAdapter extends RecyclerView.Adapter<MovieInfoAdapter.MovieInfoViewHolder> {
 
@@ -56,7 +56,7 @@ public class MovieInfoAdapter extends RecyclerView.Adapter<MovieInfoAdapter.Movi
         // common ImageView object/view ...
         ViewCompat.setTransitionName(holder.ivMoviePoster, mi.getPosterURL());
 
-        InfoFetcherUtil.setPosterToView(null, mi, holder.ivMoviePoster);
+        AppUtil.setPosterToView(null, mi, holder.ivMoviePoster);
     }
 
     @Override

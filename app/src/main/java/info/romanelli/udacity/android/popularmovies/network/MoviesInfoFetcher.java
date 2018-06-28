@@ -1,4 +1,4 @@
-package info.romanelli.udacity.android.popularmovies.util;
+package info.romanelli.udacity.android.popularmovies.network;
 
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -10,8 +10,8 @@ import java.net.URL;
 import java.util.ArrayList;
 
 import info.romanelli.udacity.android.popularmovies.BuildConfig;
-import info.romanelli.udacity.android.popularmovies.FavMoviesObserver;
-import info.romanelli.udacity.android.popularmovies.network.MovieInfo;
+import info.romanelli.udacity.android.popularmovies.util.AppUtil;
+import info.romanelli.udacity.android.popularmovies.util.FavMoviesObserver;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.http.GET;
@@ -58,7 +58,7 @@ public class MoviesInfoFetcher extends AbstractFetcher {
         // Need to call out to the Internet ...
         ///////////////////////////////////////
 
-        if (InfoFetcherUtil.isOnline(activity)) {
+        if (AppUtil.isOnline(activity)) {
             Log.d(TAG, "fetchMoviesInfo(): Online; starting Retrofit process for list type [" +
                     moviesInfoType + "] ...");
 
