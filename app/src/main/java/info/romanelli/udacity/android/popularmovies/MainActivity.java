@@ -70,6 +70,10 @@ public class MainActivity
         else {
             // Re-create from rotation, reload previously saved movie info data ...
             listMovieInfo = savedInstanceState.getParcelableArrayList(DetailActivity.KEY_BUNDLE_MOVIEINFO);
+            typeMoviesList = MoviesInfoFetcher.MoviesInfoType.valueOf(
+                    (String) savedInstanceState.get(MoviesInfoFetcher.MoviesInfoType.class.getSimpleName())
+            );
+            Log.d(TAG, "fetchMoviesInfo: typeMoviesList set to --> " + typeMoviesList);
             fetchedMoviesInfo(listMovieInfo);
         }
     }
@@ -77,6 +81,7 @@ public class MainActivity
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         outState.putParcelableArrayList(DetailActivity.KEY_BUNDLE_MOVIEINFO, listMovieInfo);
+        outState.putString(MoviesInfoFetcher.MoviesInfoType.class.getSimpleName(), typeMoviesList.name());
         super.onSaveInstanceState(outState);
     }
 
@@ -88,6 +93,7 @@ public class MainActivity
 
         Intent intent = new Intent(this, DetailActivity.class);
         intent.putExtra(DetailActivity.KEY_BUNDLE_MOVIEINFO, movieInfo);
+        intent.putExtra(MoviesInfoFetcher.MoviesInfoType.class.getSimpleName(), typeMoviesList.name());
 
         // Setup transition options for movie poster from/to main/detail activities ...
         ActivityOptions activityOptions = ActivityOptions.makeSceneTransitionAnimation(
@@ -150,6 +156,7 @@ public class MainActivity
                 Log.e(TAG, "onOptionsItemSelected: Unknown options item id! ["+ item.getItemId() +"]");
                 return true; // consume, don't continue
         }
+        Log.d(TAG, "onOptionsItemSelected: typeMoviesList set to --> " + typeMoviesList);
 
         MoviesInfoFetcher.fetchMoviesInfo(this, this, typeMoviesList);
 
@@ -163,7 +170,7 @@ public class MainActivity
      */
     @Override
     public void fetchedMoviesInfo(ArrayList<MovieInfo> listMovieInfo) {
-        Log.d(TAG, "moviesInfofetched() called with: listMovieInfo = [" + listMovieInfo + "]");
+        Log.d(TAG, "moviesInfofetched() called with: listMovieInfo = ["+ typeMoviesList +"][" + listMovieInfo + "]");
         // Remember the list of MovieInfo objects ...
         this.listMovieInfo = listMovieInfo;
         // Tell the adapter to update ...

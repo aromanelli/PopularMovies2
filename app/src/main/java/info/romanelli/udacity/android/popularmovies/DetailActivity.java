@@ -28,12 +28,13 @@ import info.romanelli.udacity.android.popularmovies.network.MovieVideosInfo;
 import info.romanelli.udacity.android.popularmovies.util.InfoFetcherUtil;
 import info.romanelli.udacity.android.popularmovies.util.MovieReviewsFetcher;
 import info.romanelli.udacity.android.popularmovies.util.MovieVideosFetcher;
+import info.romanelli.udacity.android.popularmovies.util.MoviesInfoFetcher;
 
 public class DetailActivity
         extends AppCompatActivity
         implements MovieVideosFetcher.Listener, MovieReviewsFetcher.Listener {
 
-    final static private String TAG = MainActivity.class.getSimpleName();
+    final static private String TAG = DetailActivity.class.getSimpleName();
 
     final static String KEY_BUNDLE_MOVIEINFO = "keyBundleMovieInfo";
 
@@ -69,7 +70,12 @@ public class DetailActivity
 
         Intent intent = getIntent();
         if (intent.hasExtra(KEY_BUNDLE_MOVIEINFO)) {
-            populateUI((MovieInfo) intent.getParcelableExtra(KEY_BUNDLE_MOVIEINFO));
+            populateUI(
+                    (MovieInfo) intent.getParcelableExtra(KEY_BUNDLE_MOVIEINFO),
+                    MoviesInfoFetcher.MoviesInfoType.valueOf(
+                            intent.getStringExtra(MoviesInfoFetcher.MoviesInfoType.class.getSimpleName())
+                    )
+            );
         }
         else {
             InfoFetcherUtil.hideToast();
@@ -79,8 +85,11 @@ public class DetailActivity
 
     }
 
-    private void populateUI(final MovieInfo movieInfo) {
-        Log.d(TAG, "populateUI() called with: movieInfo = [" + movieInfo + "]");
+    private void populateUI(
+            final MovieInfo movieInfo,
+            final MoviesInfoFetcher.MoviesInfoType moviesInfoType ) {
+
+        Log.d(TAG, "populateUI() called with: movieInfo = [" + movieInfo + "], moviesInfoType = [" + moviesInfoType + "]");
 
         // Set the URL for the movie poster to the ImageView showing the poster ...
         mPoster.setTransitionName(movieInfo.getPosterURL());
@@ -95,10 +104,11 @@ public class DetailActivity
         mTitle.setText(movieInfo.getTitle());
         mReleaseYear.setText(movieInfo.getReleaseDateYearText());
         mVoteAverage.setText(movieInfo.getVoteAverageText());
+        mPlotSynopsis.setText(movieInfo.getOverview());
 
         // Set the favorites flag, as well as its click listener ...
         final MovieModel model = ViewModelProviders.of(
-                this,
+                DetailActivity.this,
                 new MovieModelFactory(
                         AppDatabase.$(getApplicationContext()),
                         movieInfo.getId()
@@ -107,10 +117,11 @@ public class DetailActivity
         model.getMovieEntry().observe(this, new Observer<MovieEntry>() {
             @Override
             public void onChanged(@Nullable MovieEntry movieEntry) {
-                Log.d(TAG, "onChanged() called with: movieEntry = [" + movieEntry + "]["+ model.getMovieEntry().getValue() +"]");
-                model.getMovieEntry().removeObserver(this); // No external changes, so no need to listen further
+                Log.d(TAG, "model.getMovieEntry().onChanged() called with: movieEntry = [" + movieEntry + "]["+ model.getMovieEntry().getValue() +"]");
+                // model.getMovieEntry().removeObserver(this); // No external changes, so no need to listen further
                 // We only save favorite'd recs to the db, so if no entry, not a favorite ...
-                mFavorite.setChecked( movieEntry != null );
+                // (If coming from 'Favorites' view movieEntry will be null though record exists!)
+                mFavorite.setChecked( (movieEntry != null) );
             }
         });
         // Listen for the user clicking on the favorites control ...
@@ -118,37 +129,37 @@ public class DetailActivity
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "onClick() called: [" + mFavorite.isChecked() + "]");
-                // TODO AOR Disable the button until the execute is done?
                 AppExecutors.$().diskIO().execute(new Runnable() {
                     @Override
                     public void run() {
+
+                        MovieEntry entry = new MovieEntry(
+                                movieInfo.getId(), // MovieInfo id, NOT MovieEntry id!
+                                null
+                        );
+
                         // We only save favorites to the db, to conserve resources,
                         // so first, we delete the old record, no matter what ...
-                        if (model.getMovieEntry().getValue() != null) { // First time it will be null
-                            Log.d(TAG, "onClick() called; deleting movieEntry = [" + model.getMovieEntry().getValue() + "]");
-                            AppDatabase.$(getApplicationContext()).movieDao()
-                                    .deleteMovie(model.getMovieEntry().getValue());
-                        }
+                        Log.d(TAG, "onClick() called; deleting movieEntry = [" + entry + "]");
+                        AppDatabase.$(getApplicationContext()).movieDao()
+                                .deleteMovie(entry);
+
                         // ... and then if the user has pressed the favorite, we add it to the db ...
                         if (mFavorite.isChecked()) {
-                            MovieEntry entry = new MovieEntry(
-                                    movieInfo.getId(), // MovieInfo id, NOT MovieEntry id!
-                                    new GsonBuilder().create().toJson(movieInfo)
-                            );
+                            entry.setJson(new GsonBuilder().create().toJson(movieInfo));
                             // @Insert is OnConflictStrategy.REPLACE so will not duplicate records,
-                            // BUT!, WILL change 'id' of record to a different value (old rec del)!
                             Log.d(TAG, "onClick() called; inserting movieEntry = ["+ entry +"]["+ model.getMovieEntry().getValue() +"]");
                             long newId = AppDatabase.$(getApplicationContext()).movieDao()
                                     .insertMovie(entry);
                             Log.d(TAG, "onClick() called: newId: " + newId);
                             Log.d(TAG, "onClick() called; inserted movieEntry = ["+ entry +"]["+ model.getMovieEntry().getValue() +"]");
                         }
+
                     }
                 });
             }
         });
 
-        mPlotSynopsis.setText(movieInfo.getOverview());
     }
 
     @Override
