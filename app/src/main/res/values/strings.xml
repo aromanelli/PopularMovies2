@@ -9,7 +9,7 @@
 
     <string name="menu_top_rated">Top Rated</string>
     <string name="menu_popular">Popular</string>
-    <string name="menu_favorite">Favorite</string>
+    <string name="menu_favorite">Favorites</string>
 
     <!-- 'movie_poster_image used by assistance ui -->
     <string name="movie_poster_image">Movie Poster</string>

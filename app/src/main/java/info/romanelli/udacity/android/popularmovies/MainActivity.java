@@ -73,7 +73,6 @@ public class MainActivity
             typeMoviesList = MoviesInfoFetcher.MoviesInfoType.valueOf(
                     (String) savedInstanceState.get(MoviesInfoFetcher.MoviesInfoType.class.getSimpleName())
             );
-            Log.d(TAG, "fetchMoviesInfo: typeMoviesList set to --> " + typeMoviesList);
             fetchedMoviesInfo(listMovieInfo);
         }
     }
@@ -93,7 +92,6 @@ public class MainActivity
 
         Intent intent = new Intent(this, DetailActivity.class);
         intent.putExtra(DetailActivity.KEY_BUNDLE_MOVIEINFO, movieInfo);
-        intent.putExtra(MoviesInfoFetcher.MoviesInfoType.class.getSimpleName(), typeMoviesList.name());
 
         // Setup transition options for movie poster from/to main/detail activities ...
         ActivityOptions activityOptions = ActivityOptions.makeSceneTransitionAnimation(

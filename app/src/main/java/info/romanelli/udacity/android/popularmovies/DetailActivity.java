@@ -28,7 +28,6 @@ import info.romanelli.udacity.android.popularmovies.network.MovieVideosInfo;
 import info.romanelli.udacity.android.popularmovies.util.InfoFetcherUtil;
 import info.romanelli.udacity.android.popularmovies.util.MovieReviewsFetcher;
 import info.romanelli.udacity.android.popularmovies.util.MovieVideosFetcher;
-import info.romanelli.udacity.android.popularmovies.util.MoviesInfoFetcher;
 
 public class DetailActivity
         extends AppCompatActivity
@@ -70,12 +69,7 @@ public class DetailActivity
 
         Intent intent = getIntent();
         if (intent.hasExtra(KEY_BUNDLE_MOVIEINFO)) {
-            populateUI(
-                    (MovieInfo) intent.getParcelableExtra(KEY_BUNDLE_MOVIEINFO),
-                    MoviesInfoFetcher.MoviesInfoType.valueOf(
-                            intent.getStringExtra(MoviesInfoFetcher.MoviesInfoType.class.getSimpleName())
-                    )
-            );
+            populateUI( (MovieInfo) intent.getParcelableExtra(KEY_BUNDLE_MOVIEINFO) );
         }
         else {
             InfoFetcherUtil.hideToast();
@@ -85,11 +79,9 @@ public class DetailActivity
 
     }
 
-    private void populateUI(
-            final MovieInfo movieInfo,
-            final MoviesInfoFetcher.MoviesInfoType moviesInfoType ) {
+    private void populateUI(final MovieInfo movieInfo) {
 
-        Log.d(TAG, "populateUI() called with: movieInfo = [" + movieInfo + "], moviesInfoType = [" + moviesInfoType + "]");
+        Log.d(TAG, "populateUI() called with: movieInfo = [" + movieInfo + "]");
 
         // Set the URL for the movie poster to the ImageView showing the poster ...
         mPoster.setTransitionName(movieInfo.getPosterURL());
@@ -118,7 +110,6 @@ public class DetailActivity
             @Override
             public void onChanged(@Nullable MovieEntry movieEntry) {
                 Log.d(TAG, "model.getMovieEntry().onChanged() called with: movieEntry = [" + movieEntry + "]["+ model.getMovieEntry().getValue() +"]");
-                // model.getMovieEntry().removeObserver(this); // No external changes, so no need to listen further
                 // We only save favorite'd recs to the db, so if no entry, not a favorite ...
                 // (If coming from 'Favorites' view movieEntry will be null though record exists!)
                 mFavorite.setChecked( (movieEntry != null) );
