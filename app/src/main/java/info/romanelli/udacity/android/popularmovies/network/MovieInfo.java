@@ -17,11 +17,11 @@ public class MovieInfo implements Parcelable {
 
     final static private String TAG = MovieInfo.class.getSimpleName();
 
-    @SerializedName("id")
-    private int id;
-
     @SerializedName("vote_count")
     private int voteCount;
+
+    @SerializedName("id")
+    private int id;
 
 //    @SerializedName("video")
 //    private boolean video;
@@ -61,8 +61,8 @@ public class MovieInfo implements Parcelable {
 
     @SuppressWarnings("WeakerAccess")
     protected MovieInfo(Parcel in) {
-        id = in.readInt();
         voteCount = in.readInt();
+        id = in.readInt();
 //        video = in.readByte() != 0;
         voteAverage = in.readFloat();
         title = in.readString();
