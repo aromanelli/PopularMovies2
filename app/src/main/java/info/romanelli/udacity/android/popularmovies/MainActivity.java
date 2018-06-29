@@ -87,8 +87,13 @@ public class MainActivity
     @Override
     public void onMovieClick(final MovieInfo movieInfo, final ImageView ivPoster) {
 
+        if (!AppUtil.ifOnline(this)) {
+            // finish();
+            return;
+        }
+
         // Call showToast early, as it has its own internal 'wait before show' timer ...
-        AppUtil.showToast(this, getString(R.string.progress_retrieving));
+        AppUtil.showToast(this, getString(R.string.progress_retrieving), true);
 
         Intent intent = new Intent(this, DetailActivity.class);
         intent.putExtra(DetailActivity.KEY_BUNDLE_MOVIEINFO, movieInfo);
@@ -142,21 +147,26 @@ public class MainActivity
 
         switch (item.getItemId()) {
             case R.id.menu_top_rated:
-                typeMoviesList = MoviesInfoFetcher.MoviesInfoType.TOP_RATED;
+                if (AppUtil.ifOnline(this)) {
+                    typeMoviesList = MoviesInfoFetcher.MoviesInfoType.TOP_RATED;
+                    MoviesInfoFetcher.fetchMoviesInfo(this, this, typeMoviesList);
+                }
                 break;
             case R.id.menu_popular:
-                typeMoviesList = MoviesInfoFetcher.MoviesInfoType.POPULAR;
+                if (AppUtil.ifOnline(this)) {
+                    typeMoviesList = MoviesInfoFetcher.MoviesInfoType.POPULAR;
+                    MoviesInfoFetcher.fetchMoviesInfo(this, this, typeMoviesList);
+                }
                 break;
             case R.id.menu_favorites:
                 typeMoviesList = MoviesInfoFetcher.MoviesInfoType.FAVORITES;
+                MoviesInfoFetcher.fetchMoviesInfo(this, this, typeMoviesList);
                 break;
             default:
-                Log.e(TAG, "onOptionsItemSelected: Unknown options item id! ["+ item.getItemId() +"]");
+                Log.e(TAG, "onOptionsItemSelected: Unknown options item id! [" + item.getItemId() + "]");
                 return true; // consume, don't continue
         }
         Log.d(TAG, "onOptionsItemSelected: typeMoviesList set to --> " + typeMoviesList);
-
-        MoviesInfoFetcher.fetchMoviesInfo(this, this, typeMoviesList);
 
         invalidateOptionsMenu(); // Android 3.0+ needs this to re-call onPrepareOptionsMenu
         return super.onOptionsItemSelected(item);

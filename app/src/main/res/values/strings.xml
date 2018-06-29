@@ -20,4 +20,6 @@
     <string name="label_trailers">Trailers:</string>
     <string name="label_reviews">Reviews:</string>
 
+    <string name="msg_offline">Offline</string>
+
 </resources>

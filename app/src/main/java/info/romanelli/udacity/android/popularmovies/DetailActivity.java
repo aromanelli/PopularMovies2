@@ -75,6 +75,12 @@ public class DetailActivity
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
+
+        if (!AppUtil.ifOnline(this)) {
+            // finish();
+            return;
+        }
+
         setContentView(R.layout.activity_detail);
 
         ButterKnife.bind(this);
@@ -99,12 +105,11 @@ public class DetailActivity
 
         Intent intent = getIntent();
         if (intent.hasExtra(KEY_BUNDLE_MOVIEINFO)) {
-            populateUI( (MovieInfo) intent.getParcelableExtra(KEY_BUNDLE_MOVIEINFO) );
-        }
-        else {
+            populateUI((MovieInfo) intent.getParcelableExtra(KEY_BUNDLE_MOVIEINFO));
+        } else {
+            Log.e(TAG, "onCreate: Expected to receive a MovieInfo object!");
             AppUtil.hideToast();
             finish();
-            Log.e(TAG, "onCreate: Expected to receive a MovieInfo object!");
         }
 
     }
