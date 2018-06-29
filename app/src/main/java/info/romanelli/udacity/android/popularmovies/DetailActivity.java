@@ -3,6 +3,7 @@ package info.romanelli.udacity.android.popularmovies;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -234,15 +235,11 @@ public class DetailActivity
     @Override
     public void onMovieDetailsClick(Object item) {
         Log.d(TAG, "onMovieDetailsClick() called with: item = [" + item + "]");
-        if (item instanceof MovieReviewsInfo) {
-            // TODO AOR CODE THIS!
+        if (item instanceof MovieVideosInfo) {
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setData(Uri.parse("http://m.youtube.com/watch?v=" + ((MovieVideosInfo) item).getKey() ));
+            startActivity(intent);
         }
-        else if (item instanceof MovieVideosInfo) {
-            // TODO AOR CODE THIS!
-        }
-        else {
-            throw new IllegalStateException("Unknown movie details object! ["+ item +"]");
-        }
-
     }
+
 }
