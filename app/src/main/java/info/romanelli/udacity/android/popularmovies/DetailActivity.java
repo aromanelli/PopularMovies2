@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -18,6 +19,7 @@ import android.widget.ToggleButton;
 import com.google.gson.GsonBuilder;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import butterknife.BindView;
@@ -46,6 +48,13 @@ public class DetailActivity
     final static private String TAG = DetailActivity.class.getSimpleName();
 
     final static String KEY_BUNDLE_MOVIEINFO = "keyBundleMovieInfo";
+    final static private String KEY_SCROLL_POS = "SCROLL_POSITION";
+
+    static private int SCROLL_X = 0;
+    static private int SCROLL_Y = 0;
+
+    @BindView(R.id.detailscrollview)
+    NestedScrollView mDetailScrollView;
 
     @BindView(R.id.ivMoviePoster)
     ImageView mPoster;
@@ -240,6 +249,15 @@ public class DetailActivity
 
         // Display of this activity is postponed until code inside of setPosterToView is called!
         AppUtil.setPosterToView(this, movieInfo, mPoster);
+
+        // Restore the previous scroll location ...
+        mDetailScrollView.post(new Runnable() {
+            @Override
+            public void run() {
+                mDetailScrollView.scrollTo(SCROLL_X, SCROLL_Y);
+            }
+        });
+
     }
 
     @Override
@@ -258,6 +276,31 @@ public class DetailActivity
                 AppUtil.showToast(this, getString(R.string.msg_no_intent), false);
             }
 
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        Log.d(TAG, "onSaveInstanceState() called with: outState = [" + outState + "]["+
+                mDetailScrollView.getScrollX() +"]["+ mDetailScrollView.getScrollY() +"]");
+        super.onSaveInstanceState(outState);
+        outState.putIntArray(
+                KEY_SCROLL_POS,
+                new int[]{
+                        mDetailScrollView.getScrollX(),
+                        mDetailScrollView.getScrollY()
+                }
+        );
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        final int[] position = savedInstanceState.getIntArray(KEY_SCROLL_POS);
+        Log.d(TAG, "onRestoreInstanceState: position: " + Arrays.toString(position));
+        if(position != null) {
+            SCROLL_X = position[0];
+            SCROLL_Y = position[1];
         }
     }
 
