@@ -74,7 +74,7 @@ public class MovieReviewsFetcher extends AbstractFetcher {
             });
 
         } else {
-            Log.w(TAG, "fetchMovieReviewsInfo: Not online, so cannot do fetching; aborting!");
+            Log.e(TAG, "fetchMovieReviewsInfo: Not online, so cannot do fetching; aborting!");
         }
     }
 

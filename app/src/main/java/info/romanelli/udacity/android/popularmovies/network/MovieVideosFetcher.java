@@ -74,7 +74,7 @@ public class MovieVideosFetcher extends AbstractFetcher {
             });
 
         } else {
-            Log.w(TAG, "fetchMovieVideosInfo: Not online, so cannot do fetching; aborting!");
+            Log.e(TAG, "fetchMovieVideosInfo: Not online, so cannot do fetching; aborting!");
         }
     }
 

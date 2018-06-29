@@ -97,7 +97,7 @@ public class MoviesInfoFetcher extends AbstractFetcher {
 
         }
         else {
-            Log.w(TAG, "fetchMoviesInfo: Not online, so cannot do fetching; aborting!");
+            Log.e(TAG, "fetchMoviesInfo: Not online, so cannot do fetching; aborting!");
         }
 
     }
