@@ -22,4 +22,6 @@
 
     <string name="msg_offline">Offline</string>
 
+    <string name="msg_no_intent">No App Available To View Content</string>
+
 </resources>
