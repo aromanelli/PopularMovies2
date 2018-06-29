@@ -70,7 +70,6 @@ public class DetailActivity
 
     private MovieDetailsAdapter mAdapter;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -229,10 +228,14 @@ public class DetailActivity
                 movieInfo.getMovieVideosInfo().size() +
                         movieInfo.getMovieReviewsInfo().size()
         );
-        listData.add(getString(R.string.label_trailers));
-        listData.addAll(movieInfo.getMovieVideosInfo());
-        listData.add(getString(R.string.label_reviews));
-        listData.addAll(movieInfo.getMovieReviewsInfo());
+        if (movieInfo.getMovieVideosInfo().size() >= 1) {
+            listData.add(getString(R.string.label_trailers));
+            listData.addAll(movieInfo.getMovieVideosInfo());
+        }
+        if (movieInfo.getMovieReviewsInfo().size() >= 1) {
+            listData.add(getString(R.string.label_reviews));
+            listData.addAll(movieInfo.getMovieReviewsInfo());
+        }
         mAdapter.setData(listData);
 
         // Display of this activity is postponed until code inside of setPosterToView is called!
