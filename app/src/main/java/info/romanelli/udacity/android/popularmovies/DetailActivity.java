@@ -224,7 +224,9 @@ public class DetailActivity
                 movieInfo.getMovieVideosInfo().size() +
                         movieInfo.getMovieReviewsInfo().size()
         );
+        listData.add(getString(R.string.label_trailers));
         listData.addAll(movieInfo.getMovieVideosInfo());
+        listData.add(getString(R.string.label_reviews));
         listData.addAll(movieInfo.getMovieReviewsInfo());
         mAdapter.setData(listData);
 

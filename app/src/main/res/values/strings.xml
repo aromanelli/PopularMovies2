@@ -17,4 +17,7 @@
 
     <string name="progress_retrieving">Retrieving…</string>
 
+    <string name="label_trailers">Trailers:</string>
+    <string name="label_reviews">Reviews:</string>
+
 </resources>

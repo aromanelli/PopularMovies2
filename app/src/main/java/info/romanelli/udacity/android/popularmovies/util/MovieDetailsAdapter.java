@@ -24,6 +24,7 @@ public class MovieDetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     final static private int REVIEW = 100;
     final static private int VIDEO = 200;
+    final static private int TEXT = 300;
 
     private List<Object> listDetails;
     final private OnClickHandler clickHandler;
@@ -58,6 +59,11 @@ public class MovieDetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                         inflater.inflate(R.layout.movie_videos_item, parent, false)
                 );
                 break;
+            case TEXT:
+                viewHolder = new TextViewHolder(
+                        inflater.inflate(R.layout.movie_text_item, parent, false)
+                );
+                break;
             default:
                 Log.e(TAG, "onCreateViewHolder: " + viewType);
                 throw new IllegalStateException("onCreateViewHolder");
@@ -75,6 +81,9 @@ public class MovieDetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 break;
             case VIDEO:
                 configureVideosViewHolder( ((VideosViewHolder) holder), position );
+                break;
+            case TEXT:
+                configureTextViewHolder( ((TextViewHolder) holder), position);
                 break;
             default:
                 Log.e(TAG, "onBindViewHolder: " + holder.getItemViewType() );
@@ -100,6 +109,14 @@ public class MovieDetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         }
     }
 
+    private void configureTextViewHolder(TextViewHolder holder, int position) {
+        Log.d(TAG, "configureTextViewHolder() called with: holder = [" + holder + "], position = [" + position + "]");
+        Object info = listDetails.get(position);
+        if (info != null) {
+            holder.getTvMovieText().setText(info.toString());
+        }
+    }
+
     @Override
     public int getItemCount() {
         Log.d(TAG, "getItemCount() called ["+ ((listDetails != null) ? listDetails.size() : 0) +"]");
@@ -115,13 +132,32 @@ public class MovieDetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         else if (o instanceof MovieVideosInfo) {
             return VIDEO;
         }
-        Log.d(TAG, "getItemViewType() could not determine the details type! [" +
-                ((o != null) ? o.getClass().getCanonicalName() : "null") + "]");
-        return -1;
+        else {
+            return TEXT;
+        }
     }
 
     public interface OnClickHandler {
         void onMovieDetailsClick(final Object item);
+    }
+
+    public class TextViewHolder extends RecyclerView.ViewHolder {
+
+        @BindView(R.id.tvMovieText)
+        TextView tvMovieText;
+
+        TextViewHolder(View itemView) {
+            super(itemView);
+            ButterKnife.bind(this, itemView);
+        }
+
+        public TextView getTvMovieText() {
+            return tvMovieText;
+        }
+
+        public void setTvMovieText(TextView tvMovieText) {
+            this.tvMovieText = tvMovieText;
+        }
     }
 
     public class ReviewsViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
