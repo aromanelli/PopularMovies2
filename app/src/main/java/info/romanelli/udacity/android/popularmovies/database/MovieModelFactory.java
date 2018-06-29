@@ -4,6 +4,8 @@ import android.arch.lifecycle.ViewModel;
 import android.arch.lifecycle.ViewModelProvider;
 import android.support.annotation.NonNull;
 
+import info.romanelli.udacity.android.popularmovies.util.AppDatabase;
+
 public class MovieModelFactory extends ViewModelProvider.NewInstanceFactory {
 
     private AppDatabase appDb;

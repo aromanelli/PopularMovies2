@@ -7,6 +7,7 @@
     tools:context=".DetailActivity">
 
     <android.support.constraint.ConstraintLayout
+        android:id="@+id/layoutConstraint"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
@@ -16,12 +17,12 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:background="@color/movie_detail_title_back"
+            android:paddingBottom="32dp"
+            android:paddingEnd="16dp"
+            android:paddingStart="16dp"
+            android:paddingTop="32dp"
             android:textColor="@color/movie_detail_title_fore"
             android:textSize="36sp"
-            android:paddingTop="32dp"
-            android:paddingBottom="32dp"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -62,14 +63,14 @@
 
         <ToggleButton
             android:id="@+id/tbFavorite"
-            android:button="@android:drawable/btn_star"
-            android:background="@android:color/transparent"
-            android:textOn=""
-            android:textOff=""
-            android:focusable="false"
-            android:focusableInTouchMode="false"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:button="@android:drawable/btn_star"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:textOff=""
+            android:textOn=""
             app:layout_constraintStart_toStartOf="@+id/tvRating"
             app:layout_constraintTop_toBottomOf="@+id/tvRating" />
 
@@ -79,11 +80,22 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="24dp"
             android:textAlignment="viewStart"
             app:layout_constraintEnd_toEndOf="@+id/tvTitle"
             app:layout_constraintStart_toStartOf="@+id/tvTitle"
             app:layout_constraintTop_toBottomOf="@+id/ivMoviePoster" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rvVidsAndReviews"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginTop="32dp"
+            app:layout_constraintBottom_toBottomOf="@id/layoutConstraint"
+            app:layout_constraintEnd_toEndOf="@+id/tvPlotSynopsis"
+            app:layout_constraintStart_toStartOf="@+id/tvPlotSynopsis"
+            app:layout_constraintTop_toBottomOf="@+id/tvPlotSynopsis" />
 
 
     </android.support.constraint.ConstraintLayout>

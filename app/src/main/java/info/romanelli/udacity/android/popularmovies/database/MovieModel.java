@@ -4,6 +4,8 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.ViewModel;
 import android.util.Log;
 
+import info.romanelli.udacity.android.popularmovies.util.AppDatabase;
+
 public class MovieModel extends ViewModel {
 
     private static final String TAG = MovieModel.class.getSimpleName();

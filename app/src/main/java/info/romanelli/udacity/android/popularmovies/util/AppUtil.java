@@ -17,6 +17,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import info.romanelli.udacity.android.popularmovies.R;
 import info.romanelli.udacity.android.popularmovies.network.MovieInfo;
+import info.romanelli.udacity.android.popularmovies.network.MovieVideosInfo;
 
 public class AppUtil {
 
@@ -51,18 +52,18 @@ public class AppUtil {
                 .appendEncodedPath("w342") // NOT appendPath!
                 .appendEncodedPath(mi.getPosterURL()) // NOT appendPath!
                 .build();
-        Log.d(TAG, "onBindViewHolder: Uri for poster: ["+ uri +"]");
+        Log.d(TAG, "setPosterToView: Uri for poster: ["+ uri +"]");
         Picasso.get().load(uri).into(
                 iv,
                 new com.squareup.picasso.Callback() {
-                    // Null checks are because this shared code is called from both
-                    // the detail activity, and the movie info RecyclerView.Adapter,
-                    // but only needs to be done from detail activity, since it has
-                    // a supportPostponeEnterTransition() on its onCreate method,
-                    // which pauses, but the adapter does not make that same call,
-                    // and hence does not postpone its transition animation.
                     @Override
                     public void onSuccess() {
+                        // Null checks are because this shared code is called from both
+                        // the detail activity, and the movie info RecyclerView.Adapter,
+                        // but only needs to be done from detail activity, since it has
+                        // a supportPostponeEnterTransition() on its onCreate method,
+                        // which pauses, but the adapter does not make that same call,
+                        // and hence does not postpone its transition animation.
                         if (activity != null) {
                             // Start up previously postpone transition to detail activity
                             activity.supportStartPostponedEnterTransition();
@@ -71,6 +72,12 @@ public class AppUtil {
 
                     @Override
                     public void onError(Exception e) {
+                        // Null checks are because this shared code is called from both
+                        // the detail activity, and the movie info RecyclerView.Adapter,
+                        // but only needs to be done from detail activity, since it has
+                        // a supportPostponeEnterTransition() on its onCreate method,
+                        // which pauses, but the adapter does not make that same call,
+                        // and hence does not postpone its transition animation.
                         if (activity != null) {
                             // Start up previously postpone transition to detail activity
                             activity.supportStartPostponedEnterTransition();
@@ -78,6 +85,18 @@ public class AppUtil {
                     }
                 }
         );
+    }
+
+    static public void setVideoThumbnailToView(MovieVideosInfo info, ImageView imageView) {
+        Log.d(TAG, "setVideoThumbnailToView() called with: info = [" + info + "], imageView = [" + imageView + "]");
+        if ("YouTube".equals(info.getSite())) {
+            final Uri uri = Uri.parse("http://img.youtube.com/vi/"+ info.getKey() +"/0.jpg");
+            Log.d(TAG, "setVideoThumbnailToView: Uri for video thumbnail: ["+ uri +"]");
+            Picasso.get().load(uri).placeholder(R.drawable.ic_launcher_background).into(imageView);
+        }
+        else {
+            Log.w(TAG, "setVideoThumbnailToView: Video is NOT from YouTube! ["+ info.getSite() +"]");
+        }
     }
 
     static private Toast TOAST;

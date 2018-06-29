@@ -28,7 +28,7 @@ import info.romanelli.udacity.android.popularmovies.util.MovieInfoAdapter;
 public class MainActivity
         extends AppCompatActivity
         implements
-            MovieInfoAdapter.MovieInfoAdapterOnClickHandler,
+            MovieInfoAdapter.OnClickHandler,
             MoviesInfoFetcher.Listener {
 
     final static private String TAG = MainActivity.class.getSimpleName();
@@ -173,7 +173,7 @@ public class MainActivity
         this.listMovieInfo = listMovieInfo;
         // Tell the adapter to update ...
         mContentView.getLayoutManager().scrollToPosition(0);
-        mAdapterMovieInfo.setDataMovieInfo(this.listMovieInfo);
+        mAdapterMovieInfo.setData(this.listMovieInfo);
         // Set the title of the app to reflect the type of movies being showing ...
         switch(typeMoviesList) {
             case POPULAR:

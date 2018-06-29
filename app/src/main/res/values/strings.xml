@@ -13,6 +13,7 @@
 
     <!-- 'movie_poster_image used by assistance ui -->
     <string name="movie_poster_image">Movie Poster</string>
+    <string name="video_thumbnail_image">Video</string>
 
     <string name="progress_retrieving">Retrieving…</string>
 

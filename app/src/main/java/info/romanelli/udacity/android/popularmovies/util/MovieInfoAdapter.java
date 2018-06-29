@@ -11,34 +11,32 @@ import android.widget.ImageView;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import info.romanelli.udacity.android.popularmovies.R;
 import info.romanelli.udacity.android.popularmovies.network.MovieInfo;
 
-public class MovieInfoAdapter extends RecyclerView.Adapter<MovieInfoAdapter.MovieInfoViewHolder> {
+public class MovieInfoAdapter extends RecyclerView.Adapter<MovieInfoAdapter.ViewHolder> {
 
     @SuppressWarnings("unused")
     final static private String TAG = MovieInfoAdapter.class.getSimpleName();
 
     private List<MovieInfo> listMovieInfo;
-    final private MovieInfoAdapterOnClickHandler clickHandler;
+    final private OnClickHandler clickHandler;
 
-    public interface MovieInfoAdapterOnClickHandler {
-        void onMovieClick(final MovieInfo mi, final ImageView ivPoster);
-    }
-
-    public MovieInfoAdapter(final MovieInfoAdapterOnClickHandler clickHandler ) {
+    public MovieInfoAdapter(final OnClickHandler clickHandler ) {
         this.clickHandler = clickHandler;
     }
 
-    public void setDataMovieInfo(final List<MovieInfo> listMovieInfo) {
+    public void setData(final List<MovieInfo> listMovieInfo) {
         this.listMovieInfo = (listMovieInfo != null) ? listMovieInfo : new ArrayList<MovieInfo>();
         notifyDataSetChanged();
     }
 
     @NonNull
     @Override
-    public MovieInfoViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new MovieInfoViewHolder(
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        return new ViewHolder(
                 LayoutInflater.from(parent.getContext()).inflate(
                         R.layout.movieinfo_item,
                         parent,
@@ -48,7 +46,7 @@ public class MovieInfoAdapter extends RecyclerView.Adapter<MovieInfoAdapter.Movi
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MovieInfoViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
 
         final MovieInfo mi = listMovieInfo.get(position);
 
@@ -64,13 +62,18 @@ public class MovieInfoAdapter extends RecyclerView.Adapter<MovieInfoAdapter.Movi
         return listMovieInfo != null ? listMovieInfo.size() : 0;
     }
 
-    public class MovieInfoViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public interface OnClickHandler {
+        void onMovieClick(final MovieInfo mi, final ImageView ivPoster);
+    }
 
-        final private ImageView ivMoviePoster;
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        MovieInfoViewHolder(View itemView) {
+        @BindView(R.id.movie_poster_iv)
+        ImageView ivMoviePoster;
+
+        ViewHolder(View itemView) {
             super(itemView);
-            ivMoviePoster = itemView.findViewById(R.id.movie_poster_iv);
+            ButterKnife.bind(this, itemView);
             itemView.setOnClickListener(this);
         }
 

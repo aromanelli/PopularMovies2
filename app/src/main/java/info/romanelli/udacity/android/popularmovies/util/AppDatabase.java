@@ -1,10 +1,13 @@
-package info.romanelli.udacity.android.popularmovies.database;
+package info.romanelli.udacity.android.popularmovies.util;
 
 import android.arch.persistence.room.Database;
 import android.arch.persistence.room.Room;
 import android.arch.persistence.room.RoomDatabase;
 import android.content.Context;
 import android.util.Log;
+
+import info.romanelli.udacity.android.popularmovies.database.MovieDao;
+import info.romanelli.udacity.android.popularmovies.database.MovieEntry;
 
 @Database(entities = {MovieEntry.class}, version = 1, exportSchema = false)
 abstract public class AppDatabase extends RoomDatabase {

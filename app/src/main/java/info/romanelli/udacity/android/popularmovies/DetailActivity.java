@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -15,10 +17,10 @@ import android.widget.ToggleButton;
 import com.google.gson.GsonBuilder;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import info.romanelli.udacity.android.popularmovies.database.AppDatabase;
 import info.romanelli.udacity.android.popularmovies.database.MovieEntry;
 import info.romanelli.udacity.android.popularmovies.database.MovieModel;
 import info.romanelli.udacity.android.popularmovies.database.MovieModelFactory;
@@ -27,12 +29,18 @@ import info.romanelli.udacity.android.popularmovies.network.MovieReviewsFetcher;
 import info.romanelli.udacity.android.popularmovies.network.MovieReviewsInfo;
 import info.romanelli.udacity.android.popularmovies.network.MovieVideosFetcher;
 import info.romanelli.udacity.android.popularmovies.network.MovieVideosInfo;
+import info.romanelli.udacity.android.popularmovies.util.AppDatabase;
 import info.romanelli.udacity.android.popularmovies.util.AppExecutors;
 import info.romanelli.udacity.android.popularmovies.util.AppUtil;
+import info.romanelli.udacity.android.popularmovies.util.MovieDetailsAdapter;
 
 public class DetailActivity
-        extends AppCompatActivity
-        implements MovieVideosFetcher.Listener, MovieReviewsFetcher.Listener {
+        extends
+            AppCompatActivity
+        implements
+            MovieVideosFetcher.Listener,
+            MovieReviewsFetcher.Listener,
+            MovieDetailsAdapter.OnClickHandler {
 
     final static private String TAG = DetailActivity.class.getSimpleName();
 
@@ -56,6 +64,12 @@ public class DetailActivity
     @BindView(R.id.tvPlotSynopsis)
     TextView mPlotSynopsis;
 
+    @BindView(R.id.rvVidsAndReviews)
+    RecyclerView mVidsAndReviews;
+
+    private MovieDetailsAdapter mAdapter;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -67,6 +81,20 @@ public class DetailActivity
         // Postpone activity shown transition until after poster is loaded (see
         // method MoviesInfoFetcher.setPosterToView to restarting transition).
         supportPostponeEnterTransition();
+
+        // Override the vertical scrolling for the RecyclerView, as it is
+        // inside of a ScrollView for all views in the detail activity ...
+        mVidsAndReviews.setLayoutManager(
+                new LinearLayoutManager(this) {
+                    @Override
+                    public boolean canScrollVertically() {
+                        return false;
+                    }
+                }
+        );
+
+        mAdapter = new MovieDetailsAdapter(this);
+        mVidsAndReviews.setAdapter(mAdapter);
 
         Intent intent = getIntent();
         if (intent.hasExtra(KEY_BUNDLE_MOVIEINFO)) {
@@ -190,11 +218,31 @@ public class DetailActivity
 
         AppUtil.hideToast();
 
-        // TODO AOR Set the videos and reviews info into the UI
+        // We have the videos and reviews, so add them to their adapter ...
+        List<Object> listData = new ArrayList<>(
+                movieInfo.getMovieVideosInfo().size() +
+                        movieInfo.getMovieReviewsInfo().size()
+        );
+        listData.addAll(movieInfo.getMovieVideosInfo());
+        listData.addAll(movieInfo.getMovieReviewsInfo());
+        mAdapter.setData(listData);
 
         // Display of this activity is postponed until code inside of setPosterToView is called!
         AppUtil.setPosterToView(this, movieInfo, mPoster);
-
     }
 
+    @Override
+    public void onMovieDetailsClick(Object item) {
+        Log.d(TAG, "onMovieDetailsClick() called with: item = [" + item + "]");
+        if (item instanceof MovieReviewsInfo) {
+            // TODO AOR CODE THIS!
+        }
+        else if (item instanceof MovieVideosInfo) {
+            // TODO AOR CODE THIS!
+        }
+        else {
+            throw new IllegalStateException("Unknown movie details object! ["+ item +"]");
+        }
+
+    }
 }

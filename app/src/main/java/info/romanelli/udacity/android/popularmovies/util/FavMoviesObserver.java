@@ -12,7 +12,6 @@ import com.google.gson.GsonBuilder;
 import java.util.ArrayList;
 import java.util.List;
 
-import info.romanelli.udacity.android.popularmovies.database.AppDatabase;
 import info.romanelli.udacity.android.popularmovies.database.MovieEntry;
 import info.romanelli.udacity.android.popularmovies.network.MovieInfo;
 import info.romanelli.udacity.android.popularmovies.network.MoviesInfoFetcher;
