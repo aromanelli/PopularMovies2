@@ -245,7 +245,16 @@ public class DetailActivity
         if (item instanceof MovieVideosInfo) {
             Intent intent = new Intent(Intent.ACTION_VIEW);
             intent.setData(Uri.parse("http://m.youtube.com/watch?v=" + ((MovieVideosInfo) item).getKey() ));
-            startActivity(intent);
+
+            // Verify Intent can actually be resolved/started, and start it ...
+            if (intent.resolveActivity(getPackageManager()) != null) {
+                startActivity(intent);
+            }
+            else {
+                Log.w(TAG, "No Intent available to handle action");
+                AppUtil.showToast(this, getString(R.string.msg_no_intent), false);
+            }
+
         }
     }
 
