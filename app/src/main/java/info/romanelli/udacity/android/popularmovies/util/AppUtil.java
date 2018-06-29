@@ -23,8 +23,21 @@ public class AppUtil {
 
     final static private String TAG = AppUtil.class.getSimpleName();
 
+    static public boolean ifOnline(final Context context) {
+        Log.d(TAG, "ifOnline() called with: context = [" + context + "] " + Thread.currentThread().getName());
+        if (isOnline(context)) {
+            Log.d(TAG, "ifOnline() returning 'true' context = [" + context + "] " + Thread.currentThread().getName());
+            return true;
+        }
+        else {
+            Log.d(TAG, "ifOnline() returning 'false' context = [" + context + "] " + Thread.currentThread().getName());
+            AppUtil.showToast(context, context.getString(R.string.msg_offline), false);
+            return false;
+        }
+    }
+
     static public boolean isOnline(final Context context) {
-        Log.d(TAG, "isOnline() called with: context = [" + context + "]");
+        Log.d(TAG, "isOnline() called with: context = [" + context + "] " + Thread.currentThread().getName());
         final boolean flag;
         ConnectivityManager cm =
                 (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -32,7 +45,7 @@ public class AppUtil {
             NetworkInfo netInfo = cm.getActiveNetworkInfo();
             flag = (netInfo != null) && netInfo.isConnectedOrConnecting();
         } else {
-            Log.w(TAG, "isOnline: Unable to obtain a ConnectivityManager reference!");
+            Log.w(TAG, "isOnline: Unable to obtain a ConnectivityManager reference! " + Thread.currentThread().getName());
             flag = false;
         }
         Log.d(TAG, "isOnline: Online? " + flag);
@@ -101,52 +114,70 @@ public class AppUtil {
 
     static private Toast TOAST;
     static private AtomicBoolean PENDING_TOAST = new AtomicBoolean(false);
+    static private CountDownTimer TIMER;
 
-    static public void showToast(final Context owner, final String message) {
-        Log.d(TAG, "showToast() called with: owner = [" + owner + "], message = [" + message +
-                "], pending = ["+ PENDING_TOAST.get() +"]");
+    static public void showToast(final Context owner, final String message, final boolean delayShowing) {
+        Log.d(TAG, "showToast() called with: owner = [" + owner + "], message = [" +
+                message + "], pending = ["+ PENDING_TOAST.get() +"] " + Thread.currentThread().getName());
+
         if (PENDING_TOAST.compareAndSet(false, true)) {
-            new CountDownTimer(200, 100) {
+            if (TIMER != null) {
+                TIMER.cancel();
+            }
+            cancelToast();
+        }
+
+        if (delayShowing) {
+            TIMER = new CountDownTimer(200, 100) {
                 public void onTick(long millisUntilFinished) {
                     Log.d(TAG, "onTick() called with: millisUntilFinished = [" + millisUntilFinished +
-                            "], pending = ["+ PENDING_TOAST.get() +"]");
+                            "], pending = [" + PENDING_TOAST.get() + "] " + Thread.currentThread().getName());
                     if (!PENDING_TOAST.get()) {
                         Log.d(TAG, "onTick() canceling timer!  millisUntilFinished = [" + millisUntilFinished +
-                                "], pending = ["+ PENDING_TOAST.get() +"]");
+                                "], pending = [" + PENDING_TOAST.get() + "] " + Thread.currentThread().getName());
                         cancel(); // Cancel timer, not toast
                     }
                 }
                 public void onFinish() {
-                    Log.d(TAG, "onFinish() called, pending = ["+ PENDING_TOAST.get() +"]");
+                    Log.d(TAG, "onFinish() called, pending = [" + PENDING_TOAST.get() + "] " + Thread.currentThread().getName());
                     if (PENDING_TOAST.get()) {
-                        cancelToast(); // In case a previous toast is showing, hide, NOT cancel!
-                        TOAST = Toast.makeText(
-                                owner,
-                                (message != null) ? message : owner.getString(R.string.progress_retrieving),
-                                Toast.LENGTH_LONG);
-                        TOAST.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL, 0, 0);
-                        Log.d(TAG, "onFinish() called, SHOWING TOAST!  pending = ["+ PENDING_TOAST.get() +"]");
-                        TOAST.show();
+                        drawToast(owner, message);
                         PENDING_TOAST.set(false);
                     }
                 }
             }.start();
         }
+        else {
+            drawToast(owner, message);
+            PENDING_TOAST.set(false);
+        }
+
     }
 
     static public void hideToast() {
-        Log.d(TAG, "hideToast() called, pending = ["+ PENDING_TOAST.get() +"]");
+        Log.d(TAG, "hideToast() called, pending = ["+ PENDING_TOAST.get() +"] " + Thread.currentThread().getName());
         cancelToast();
         PENDING_TOAST.set(false);
     }
 
     static private void cancelToast() {
-        Log.d(TAG, "cancelToast() called, TOAST = ["+ TOAST +"], pending = ["+ PENDING_TOAST.get() +"]");
+        Log.d(TAG, "cancelToast() called, TOAST = ["+ TOAST +"], pending = ["+ PENDING_TOAST.get() +"] " + Thread.currentThread().getName());
         if (TOAST != null) {
-            Log.d(TAG, "cancelToast: CANCELING TOAST!");
+            Log.d(TAG, "cancelToast: CANCELING TOAST! " + Thread.currentThread().getName());
             TOAST.cancel();
             TOAST = null;
         }
+    }
+
+    static private void drawToast(final Context owner, final String message) {
+        cancelToast(); // In case a previous toast is showing, hide, NOT cancel!
+        TOAST = Toast.makeText(
+                owner,
+                (message != null) ? message : owner.getString(R.string.progress_retrieving),
+                Toast.LENGTH_LONG);
+        TOAST.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL, 0, 0);
+        Log.d(TAG, "onFinish() called, SHOWING TOAST!  pending = [" + PENDING_TOAST.get() + "] " + Thread.currentThread().getName());
+        TOAST.show();
     }
 
 }
