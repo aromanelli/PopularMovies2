@@ -93,8 +93,8 @@ public class DetailActivity
 
         ButterKnife.bind(this);
 
-        // Postpone activity shown transition until after poster is loaded (see
-        // method MoviesInfoFetcher.setPosterToView to restarting transition).
+        // Postpone activity shown transition until after poster is loaded
+        // (see method AppUtil.setPosterToView to restarting transition).
         supportPostponeEnterTransition();
 
         // Override the vertical scrolling for the RecyclerView, as it is
