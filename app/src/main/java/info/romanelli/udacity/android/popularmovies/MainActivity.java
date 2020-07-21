@@ -3,19 +3,18 @@ package info.romanelli.udacity.android.popularmovies;
 import android.app.ActivityOptions;
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.core.view.ViewCompat;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.ViewCompat;
+import androidx.recyclerview.widget.GridLayoutManager;
+
 import java.util.ArrayList;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
+import info.romanelli.udacity.android.popularmovies.databinding.ActivityMainBinding;
 import info.romanelli.udacity.android.popularmovies.network.MovieInfo;
 import info.romanelli.udacity.android.popularmovies.network.MoviesInfoFetcher;
 import info.romanelli.udacity.android.popularmovies.util.AppUtil;
@@ -33,8 +32,7 @@ public class MainActivity
 
     final static private String TAG = MainActivity.class.getSimpleName();
 
-    @BindView(R.id.fullscreen_content)
-    RecyclerView mContentView;
+    private ActivityMainBinding binding;
 
     private MovieInfoAdapter mAdapterMovieInfo;
 
@@ -48,14 +46,14 @@ public class MainActivity
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        ButterKnife.bind(this);
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
-        mContentView.setLayoutManager(new GridLayoutManager(this, 2));
-        mContentView.hasFixedSize();
+        binding.fullscreenContent.setLayoutManager(new GridLayoutManager(this, 2));
+        binding.fullscreenContent.hasFixedSize();
 
         mAdapterMovieInfo = new MovieInfoAdapter(this);
-        mContentView.setAdapter(mAdapterMovieInfo);
+        binding.fullscreenContent.setAdapter(mAdapterMovieInfo);
 
         fetchMoviesInfo(savedInstanceState);
     }
@@ -182,7 +180,7 @@ public class MainActivity
         // Remember the list of MovieInfo objects ...
         this.listMovieInfo = listMovieInfo;
         // Tell the adapter to update ...
-        mContentView.getLayoutManager().scrollToPosition(0);
+        binding.fullscreenContent.getLayoutManager().scrollToPosition(0);
         mAdapterMovieInfo.setData(this.listMovieInfo);
         // Set the title of the app to reflect the type of movies being showing ...
         switch(typeMoviesList) {

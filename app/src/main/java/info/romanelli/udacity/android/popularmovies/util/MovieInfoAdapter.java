@@ -1,19 +1,18 @@
 package info.romanelli.udacity.android.popularmovies.util;
 
-import androidx.annotation.NonNull;
-import androidx.core.view.ViewCompat;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import androidx.annotation.NonNull;
+import androidx.core.view.ViewCompat;
+import androidx.recyclerview.widget.RecyclerView;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import info.romanelli.udacity.android.popularmovies.R;
+import info.romanelli.udacity.android.popularmovies.databinding.MovieinfoItemBinding;
 import info.romanelli.udacity.android.popularmovies.network.MovieInfo;
 
 public class MovieInfoAdapter extends RecyclerView.Adapter<MovieInfoAdapter.ViewHolder> {
@@ -37,11 +36,9 @@ public class MovieInfoAdapter extends RecyclerView.Adapter<MovieInfoAdapter.View
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         return new ViewHolder(
-                LayoutInflater.from(parent.getContext()).inflate(
-                        R.layout.movieinfo_item,
-                        parent,
-                        false
-                )
+                MovieinfoItemBinding.inflate(
+                        LayoutInflater.from(parent.getContext())
+                ).getRoot()
         );
     }
 
@@ -52,9 +49,9 @@ public class MovieInfoAdapter extends RecyclerView.Adapter<MovieInfoAdapter.View
 
         // Set the transition name for the new poster being shown in the
         // common ImageView object/view ...
-        ViewCompat.setTransitionName(holder.ivMoviePoster, mi.getPosterURL());
+        ViewCompat.setTransitionName(holder.binding.moviePosterIv, mi.getPosterURL());
 
-        AppUtil.setPosterToView(null, mi, holder.ivMoviePoster);
+        AppUtil.setPosterToView(null, mi, holder.binding.moviePosterIv);
     }
 
     @Override
@@ -68,12 +65,11 @@ public class MovieInfoAdapter extends RecyclerView.Adapter<MovieInfoAdapter.View
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        @BindView(R.id.movie_poster_iv)
-        ImageView ivMoviePoster;
+        private MovieinfoItemBinding binding;
 
         ViewHolder(View itemView) {
             super(itemView);
-            ButterKnife.bind(this, itemView);
+            binding = MovieinfoItemBinding.bind(itemView); // TODO Best way to get binding ref?
             itemView.setOnClickListener(this);
         }
 
@@ -83,7 +79,7 @@ public class MovieInfoAdapter extends RecyclerView.Adapter<MovieInfoAdapter.View
             if (pos != RecyclerView.NO_POSITION) {
                 clickHandler.onMovieClick(
                         listMovieInfo.get( getAdapterPosition() ),
-                        ivMoviePoster
+                        binding.moviePosterIv
                 );
             }
         }
