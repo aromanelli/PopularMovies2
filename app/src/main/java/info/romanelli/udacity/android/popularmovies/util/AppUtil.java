@@ -5,11 +5,12 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.CountDownTimer;
-import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Gravity;
 import android.widget.ImageView;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.squareup.picasso.Picasso;
 
@@ -59,7 +60,7 @@ public class AppUtil {
 //        getWindowManager().getDefaultDisplay().getMetrics(metrics);
 //        Log.d(TAG, "onCreate: DisplayMetrics: " + metrics);
 
-        final Uri uri = Uri.parse("http://image.tmdb.org/t/p/")
+        final Uri uri = Uri.parse("https://image.tmdb.org/t/p/")
                 .buildUpon()
                 // "w92", "w154", "w185", "w342", "w500", "w780", or "original"
                 .appendEncodedPath("w342") // NOT appendPath!
