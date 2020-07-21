@@ -104,7 +104,7 @@ public class AppUtil {
     static public void setVideoThumbnailToView(MovieVideosInfo info, ImageView imageView) {
         Log.d(TAG, "setVideoThumbnailToView() called with: info = [" + info + "], imageView = [" + imageView + "]");
         if ("YouTube".equals(info.getSite())) {
-            final Uri uri = Uri.parse("http://img.youtube.com/vi/"+ info.getKey() +"/0.jpg");
+            final Uri uri = Uri.parse("https://img.youtube.com/vi/"+ info.getKey() +"/0.jpg");
             Log.d(TAG, "setVideoThumbnailToView: Uri for video thumbnail: ["+ uri +"]");
             Picasso.get().load(uri).placeholder(R.drawable.ic_launcher_background).into(imageView);
         }
