@@ -2,7 +2,7 @@ package info.romanelli.udacity.android.popularmovies.util;
 
 import android.os.Handler;
 import android.os.Looper;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.util.Log;
 
 import java.util.concurrent.Executor;

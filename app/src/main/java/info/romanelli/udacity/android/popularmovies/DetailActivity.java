@@ -1,20 +1,14 @@
 package info.romanelli.udacity.android.popularmovies;
 
-import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.widget.NestedScrollView;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.View;
-import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.ToggleButton;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.google.gson.GsonBuilder;
 
@@ -22,11 +16,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import info.romanelli.udacity.android.popularmovies.database.MovieEntry;
 import info.romanelli.udacity.android.popularmovies.database.MovieModel;
 import info.romanelli.udacity.android.popularmovies.database.MovieModelFactory;
+import info.romanelli.udacity.android.popularmovies.databinding.ActivityDetailBinding;
 import info.romanelli.udacity.android.popularmovies.network.MovieInfo;
 import info.romanelli.udacity.android.popularmovies.network.MovieReviewsFetcher;
 import info.romanelli.udacity.android.popularmovies.network.MovieReviewsInfo;
@@ -53,29 +46,7 @@ public class DetailActivity
     static private int SCROLL_X = 0;
     static private int SCROLL_Y = 0;
 
-    @BindView(R.id.detailscrollview)
-    NestedScrollView mDetailScrollView;
-
-    @BindView(R.id.ivMoviePoster)
-    ImageView mPoster;
-
-    @BindView(R.id.tvTitle)
-    TextView mTitle;
-
-    @BindView(R.id.tvReleaseYear)
-    TextView mReleaseYear;
-
-    @BindView(R.id.tvRating)
-    TextView mVoteAverage;
-
-    @BindView(R.id.tbFavorite)
-    ToggleButton mFavorite;
-
-    @BindView(R.id.tvPlotSynopsis)
-    TextView mPlotSynopsis;
-
-    @BindView(R.id.rvVidsAndReviews)
-    RecyclerView mVidsAndReviews;
+    private ActivityDetailBinding binding;
 
     private MovieDetailsAdapter mAdapter;
 
@@ -89,9 +60,8 @@ public class DetailActivity
             return;
         }
 
-        setContentView(R.layout.activity_detail);
-
-        ButterKnife.bind(this);
+        binding = ActivityDetailBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         // Postpone activity shown transition until after poster is loaded
         // (see method AppUtil.setPosterToView to restarting transition).
@@ -99,7 +69,7 @@ public class DetailActivity
 
         // Override the vertical scrolling for the RecyclerView, as it is
         // inside of a ScrollView for all views in the detail activity ...
-        mVidsAndReviews.setLayoutManager(
+        binding.rvVidsAndReviews.setLayoutManager(
                 new LinearLayoutManager(this) {
                     @Override
                     public boolean canScrollVertically() {
@@ -109,7 +79,7 @@ public class DetailActivity
         );
 
         mAdapter = new MovieDetailsAdapter(this);
-        mVidsAndReviews.setAdapter(mAdapter);
+        binding.rvVidsAndReviews.setAdapter(mAdapter);
 
         Intent intent = getIntent();
         if (intent.hasExtra(KEY_BUNDLE_MOVIEINFO)) {
@@ -127,7 +97,7 @@ public class DetailActivity
         Log.d(TAG, "populateUI() called with: movieInfo = [" + movieInfo + "]");
 
         // Set the URL for the movie poster to the ImageView showing the poster ...
-        mPoster.setTransitionName(movieInfo.getPosterURL());
+        binding.ivMoviePoster.setTransitionName(movieInfo.getPosterURL());
 
         // Make calls to get videos and reviews information ...
         movieInfo.setMovieReviewsInfo(null); // null is flag for fetch not done yet
@@ -136,10 +106,10 @@ public class DetailActivity
         MovieReviewsFetcher.fetchMovieReviewsInfo(this, movieInfo, this);
 
         // Set the main info (not videos/reviews) to the UI widgets ...
-        mTitle.setText(movieInfo.getTitle());
-        mReleaseYear.setText(movieInfo.getReleaseDateYearText());
-        mVoteAverage.setText(movieInfo.getVoteAverageText());
-        mPlotSynopsis.setText(movieInfo.getOverview());
+        binding.tvTitle.setText(movieInfo.getTitle());
+        binding.tvReleaseYear.setText(movieInfo.getReleaseDateYearText());
+        binding.tvRating.setText(movieInfo.getVoteAverageText());
+        binding.tvPlotSynopsis.setText(movieInfo.getOverview());
 
         // Set the favorites flag, as well as its click listener ...
         final MovieModel model = ViewModelProviders.of(
@@ -149,49 +119,40 @@ public class DetailActivity
                         movieInfo.getId()
                 )
             ).get(MovieModel.class);
-        model.getMovieEntry().observe(this, new Observer<MovieEntry>() {
-            @Override
-            public void onChanged(@Nullable MovieEntry movieEntry) {
-                Log.d(TAG, "model.getMovieEntry().onChanged() called with: movieEntry = [" + movieEntry + "]["+ model.getMovieEntry().getValue() +"]");
-                // We only save favorite'd recs to the db, so if no entry, not a favorite ...
-                // (If coming from 'Favorites' view movieEntry will be null though record exists!)
-                mFavorite.setChecked( (movieEntry != null) );
-            }
+        model.getMovieEntry().observe(this, movieEntry -> {
+            Log.d(TAG, "model.getMovieEntry().onChanged() called with: movieEntry = [" + movieEntry + "]["+ model.getMovieEntry().getValue() +"]");
+            // We only save favorite'd recs to the db, so if no entry, not a favorite ...
+            // (If coming from 'Favorites' view movieEntry will be null though record exists!)
+            binding.tbFavorite.setChecked( (movieEntry != null) );
         });
         // Listen for the user clicking on the favorites control ...
-        mFavorite.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d(TAG, "onClick() called: [" + mFavorite.isChecked() + "]");
-                AppExecutors.$().diskIO().execute(new Runnable() {
-                    @Override
-                    public void run() {
+        binding.tbFavorite.setOnClickListener(v -> {
+            Log.d(TAG, "onClick() called: [" + binding.tbFavorite.isChecked() + "]");
+            AppExecutors.$().diskIO().execute(() -> {
 
-                        MovieEntry entry = new MovieEntry(
-                                movieInfo.getId(), // MovieInfo id, NOT MovieEntry id!
-                                null
-                        );
+                MovieEntry entry = new MovieEntry(
+                        movieInfo.getId(), // MovieInfo id, NOT MovieEntry id!
+                        null
+                );
 
-                        // We only save favorites to the db, to conserve resources,
-                        // so first, we delete the old record, no matter what ...
-                        Log.d(TAG, "onClick() called; deleting movieEntry = [" + entry + "]");
-                        AppDatabase.$(getApplicationContext()).movieDao()
-                                .deleteMovie(entry);
+                // We only save favorites to the db, to conserve resources,
+                // so first, we delete the old record, no matter what ...
+                Log.d(TAG, "onClick() called; deleting movieEntry = [" + entry + "]");
+                AppDatabase.$(getApplicationContext()).movieDao()
+                        .deleteMovie(entry);
 
-                        // ... and then if the user has pressed the favorite, we add it to the db ...
-                        if (mFavorite.isChecked()) {
-                            entry.setJson(new GsonBuilder().create().toJson(movieInfo));
-                            // @Insert is OnConflictStrategy.REPLACE so will not duplicate records,
-                            Log.d(TAG, "onClick() called; inserting movieEntry = ["+ entry +"]["+ model.getMovieEntry().getValue() +"]");
-                            long newId = AppDatabase.$(getApplicationContext()).movieDao()
-                                    .insertMovie(entry);
-                            Log.d(TAG, "onClick() called: newId: " + newId);
-                            Log.d(TAG, "onClick() called; inserted movieEntry = ["+ entry +"]["+ model.getMovieEntry().getValue() +"]");
-                        }
+                // ... and then if the user has pressed the favorite, we add it to the db ...
+                if (binding.tbFavorite.isChecked()) {
+                    entry.setJson(new GsonBuilder().create().toJson(movieInfo));
+                    // @Insert is OnConflictStrategy.REPLACE so will not duplicate records,
+                    Log.d(TAG, "onClick() called; inserting movieEntry = ["+ entry +"]["+ model.getMovieEntry().getValue() +"]");
+                    long newId = AppDatabase.$(getApplicationContext()).movieDao()
+                            .insertMovie(entry);
+                    Log.d(TAG, "onClick() called: newId: " + newId);
+                    Log.d(TAG, "onClick() called; inserted movieEntry = ["+ entry +"]["+ model.getMovieEntry().getValue() +"]");
+                }
 
-                    }
-                });
-            }
+            });
         });
 
     }
@@ -248,15 +209,10 @@ public class DetailActivity
         mAdapter.setData(listData);
 
         // Display of this activity is postponed until code inside of setPosterToView is called!
-        AppUtil.setPosterToView(this, movieInfo, mPoster);
+        AppUtil.setPosterToView(this, movieInfo, binding.ivMoviePoster);
 
         // Restore the previous scroll location ...
-        mDetailScrollView.post(new Runnable() {
-            @Override
-            public void run() {
-                mDetailScrollView.scrollTo(SCROLL_X, SCROLL_Y);
-            }
-        });
+        binding.detailscrollview.post(() -> binding.detailscrollview.scrollTo(SCROLL_X, SCROLL_Y));
 
     }
 
@@ -280,21 +236,21 @@ public class DetailActivity
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
         Log.d(TAG, "onSaveInstanceState() called with: outState = [" + outState + "]["+
-                mDetailScrollView.getScrollX() +"]["+ mDetailScrollView.getScrollY() +"]");
+                binding.detailscrollview.getScrollX() +"]["+ binding.detailscrollview.getScrollY() +"]");
         super.onSaveInstanceState(outState);
         outState.putIntArray(
                 KEY_SCROLL_POS,
                 new int[]{
-                        mDetailScrollView.getScrollX(),
-                        mDetailScrollView.getScrollY()
+                        binding.detailscrollview.getScrollX(),
+                        binding.detailscrollview.getScrollY()
                 }
         );
     }
 
     @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         final int[] position = savedInstanceState.getIntArray(KEY_SCROLL_POS);
         Log.d(TAG, "onRestoreInstanceState: position: " + Arrays.toString(position));

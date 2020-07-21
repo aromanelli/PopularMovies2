@@ -1,20 +1,20 @@
 package info.romanelli.udacity.android.popularmovies.util;
 
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import info.romanelli.udacity.android.popularmovies.R;
+import info.romanelli.udacity.android.popularmovies.databinding.MovieReviewsItemBinding;
+import info.romanelli.udacity.android.popularmovies.databinding.MovieTextItemBinding;
+import info.romanelli.udacity.android.popularmovies.databinding.MovieVideosItemBinding;
 import info.romanelli.udacity.android.popularmovies.network.MovieReviewsInfo;
 import info.romanelli.udacity.android.popularmovies.network.MovieVideosInfo;
 
@@ -95,8 +95,8 @@ public class MovieDetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         Log.d(TAG, "configureReviewsViewHolder() called with: holder = [" + holder + "], position = [" + position + "]");
         MovieReviewsInfo info = (MovieReviewsInfo) listDetails.get(position);
         if (info != null) {
-            holder.getTvReviewAuthor().setText(info.getAuthor());
-            holder.getTvReviewText().setText(info.getContent());
+            holder.binding.tvReviewAuthor.setText(info.getAuthor());
+            holder.binding.tvReviewText.setText(info.getContent());
         }
     }
 
@@ -104,8 +104,8 @@ public class MovieDetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         Log.d(TAG, "configureVideosViewHolder() called with: holder = [" + holder + "], position = [" + position + "]");
         MovieVideosInfo info = (MovieVideosInfo) listDetails.get(position);
         if (info != null) {
-            holder.getTvVideoName().setText(info.getName());
-            AppUtil.setVideoThumbnailToView(info, holder.getIvVideoThumbnail());
+            holder.binding.tvVideoName.setText(info.getName());
+            AppUtil.setVideoThumbnailToView(info, holder.binding.ivVideoThumbnail);
         }
     }
 
@@ -113,7 +113,7 @@ public class MovieDetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         Log.d(TAG, "configureTextViewHolder() called with: holder = [" + holder + "], position = [" + position + "]");
         Object info = listDetails.get(position);
         if (info != null) {
-            holder.getTvMovieText().setText(info.toString());
+            holder.binding.tvMovieText.setText(info.toString());
         }
     }
 
@@ -143,34 +143,22 @@ public class MovieDetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     public class TextViewHolder extends RecyclerView.ViewHolder {
 
-        @BindView(R.id.tvMovieText)
-        TextView tvMovieText;
+        private MovieTextItemBinding binding;
 
         TextViewHolder(View itemView) {
             super(itemView);
-            ButterKnife.bind(this, itemView);
+            binding = MovieTextItemBinding.bind(itemView); // TODO Best way to get binding ref?
         }
 
-        public TextView getTvMovieText() {
-            return tvMovieText;
-        }
-
-        public void setTvMovieText(TextView tvMovieText) {
-            this.tvMovieText = tvMovieText;
-        }
     }
 
     public class ReviewsViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        @BindView(R.id.tvReviewAuthor)
-        TextView tvReviewAuthor;
-
-        @BindView(R.id.tvReviewText)
-        TextView tvReviewText;
+        private MovieReviewsItemBinding binding;
 
         ReviewsViewHolder(View itemView) {
             super(itemView);
-            ButterKnife.bind(this, itemView);
+            binding = MovieReviewsItemBinding.bind(itemView); // TODO Best way to get binding ref?
             itemView.setOnClickListener(this);
         }
 
@@ -185,34 +173,15 @@ public class MovieDetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             }
         }
 
-        public TextView getTvReviewAuthor() {
-            return tvReviewAuthor;
-        }
-
-        public void setTvReviewAuthor(TextView tvReviewAuthor) {
-            this.tvReviewAuthor = tvReviewAuthor;
-        }
-
-        public TextView getTvReviewText() {
-            return tvReviewText;
-        }
-
-        public void setTvReviewText(TextView tvReviewText) {
-            this.tvReviewText = tvReviewText;
-        }
     }
 
     public class VideosViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        @BindView(R.id.ivVideoThumbnail)
-        ImageView ivVideoThumbnail;
-
-        @BindView(R.id.tvVideoName)
-        TextView tvVideoName;
+        private MovieVideosItemBinding binding;
 
         VideosViewHolder(View itemView) {
             super(itemView);
-            ButterKnife.bind(this, itemView);
+            binding = MovieVideosItemBinding.bind(itemView); // TODO Best way to get binding ref?
             itemView.setOnClickListener(this);
         }
 
@@ -227,21 +196,6 @@ public class MovieDetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             }
         }
 
-        public ImageView getIvVideoThumbnail() {
-            return ivVideoThumbnail;
-        }
-
-        public void setIvVideoThumbnail(ImageView ivVideoThumbnail) {
-            this.ivVideoThumbnail = ivVideoThumbnail;
-        }
-
-        public TextView getTvVideoName() {
-            return tvVideoName;
-        }
-
-        public void setTvVideoName(TextView tvVideoName) {
-            this.tvVideoName = tvVideoName;
-        }
     }
 
 

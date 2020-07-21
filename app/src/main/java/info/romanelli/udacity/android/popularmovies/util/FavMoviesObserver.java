@@ -1,9 +1,9 @@
 package info.romanelli.udacity.android.popularmovies.util;
 
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.Observer;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -42,29 +42,21 @@ public class FavMoviesObserver implements Observer<List<MovieEntry>> {
         if (MoviesInfoFetcher.MoviesInfoType.FAVORITES.equals(moviesInfoType)) {
 
             // Convert received data into MovieInfo objects ...
-            AppExecutors.$().diskIO().execute(new Runnable() {
-                @Override
-                public void run() {
-                    // Deserialize the previously saved MovieInfo(MovieEntry) entries ...
-                    // (Serialization done in DetailActivity, off the favorites button.)
-                    final ArrayList<MovieInfo> list;
-                    if (movieEntries != null && (movieEntries.size() >= 1)) {
-                        final Gson gson = new GsonBuilder().create();
-                        list = new ArrayList<>(movieEntries.size());
-                        for (MovieEntry me : movieEntries) {
-                            list.add(gson.fromJson(me.getJson(), MovieInfo.class));
-                        }
-                    } else {
-                        // No favorites, so set the model for the view to an empty list ...
-                        list = new ArrayList<>(0);
+            AppExecutors.$().diskIO().execute(() -> {
+                // Deserialize the previously saved MovieInfo(MovieEntry) entries ...
+                // (Serialization done in DetailActivity, off the favorites button.)
+                final ArrayList<MovieInfo> list;
+                if (movieEntries != null && (movieEntries.size() >= 1)) {
+                    final Gson gson = new GsonBuilder().create();
+                    list = new ArrayList<>(movieEntries.size());
+                    for (MovieEntry me : movieEntries) {
+                        list.add(gson.fromJson(me.getJson(), MovieInfo.class));
                     }
-                    AppExecutors.$().mainThread().execute(new Runnable() {
-                        @Override
-                        public void run() {
-                            listener.fetchedMoviesInfo(list);
-                        }
-                    });
+                } else {
+                    // No favorites, so set the model for the view to an empty list ...
+                    list = new ArrayList<>(0);
                 }
+                AppExecutors.$().mainThread().execute(() -> listener.fetchedMoviesInfo(list));
             });
 
         }
