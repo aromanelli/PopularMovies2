@@ -1,15 +1,16 @@
 package info.romanelli.udacity.android.popularmovies;
 
-import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModelProviders;
+import androidx.annotation.NonNull;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.widget.NestedScrollView;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.Nullable;
+import androidx.core.widget.NestedScrollView;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -149,49 +150,40 @@ public class DetailActivity
                         movieInfo.getId()
                 )
             ).get(MovieModel.class);
-        model.getMovieEntry().observe(this, new Observer<MovieEntry>() {
-            @Override
-            public void onChanged(@Nullable MovieEntry movieEntry) {
-                Log.d(TAG, "model.getMovieEntry().onChanged() called with: movieEntry = [" + movieEntry + "]["+ model.getMovieEntry().getValue() +"]");
-                // We only save favorite'd recs to the db, so if no entry, not a favorite ...
-                // (If coming from 'Favorites' view movieEntry will be null though record exists!)
-                mFavorite.setChecked( (movieEntry != null) );
-            }
+        model.getMovieEntry().observe(this, movieEntry -> {
+            Log.d(TAG, "model.getMovieEntry().onChanged() called with: movieEntry = [" + movieEntry + "]["+ model.getMovieEntry().getValue() +"]");
+            // We only save favorite'd recs to the db, so if no entry, not a favorite ...
+            // (If coming from 'Favorites' view movieEntry will be null though record exists!)
+            mFavorite.setChecked( (movieEntry != null) );
         });
         // Listen for the user clicking on the favorites control ...
-        mFavorite.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d(TAG, "onClick() called: [" + mFavorite.isChecked() + "]");
-                AppExecutors.$().diskIO().execute(new Runnable() {
-                    @Override
-                    public void run() {
+        mFavorite.setOnClickListener(v -> {
+            Log.d(TAG, "onClick() called: [" + mFavorite.isChecked() + "]");
+            AppExecutors.$().diskIO().execute(() -> {
 
-                        MovieEntry entry = new MovieEntry(
-                                movieInfo.getId(), // MovieInfo id, NOT MovieEntry id!
-                                null
-                        );
+                MovieEntry entry = new MovieEntry(
+                        movieInfo.getId(), // MovieInfo id, NOT MovieEntry id!
+                        null
+                );
 
-                        // We only save favorites to the db, to conserve resources,
-                        // so first, we delete the old record, no matter what ...
-                        Log.d(TAG, "onClick() called; deleting movieEntry = [" + entry + "]");
-                        AppDatabase.$(getApplicationContext()).movieDao()
-                                .deleteMovie(entry);
+                // We only save favorites to the db, to conserve resources,
+                // so first, we delete the old record, no matter what ...
+                Log.d(TAG, "onClick() called; deleting movieEntry = [" + entry + "]");
+                AppDatabase.$(getApplicationContext()).movieDao()
+                        .deleteMovie(entry);
 
-                        // ... and then if the user has pressed the favorite, we add it to the db ...
-                        if (mFavorite.isChecked()) {
-                            entry.setJson(new GsonBuilder().create().toJson(movieInfo));
-                            // @Insert is OnConflictStrategy.REPLACE so will not duplicate records,
-                            Log.d(TAG, "onClick() called; inserting movieEntry = ["+ entry +"]["+ model.getMovieEntry().getValue() +"]");
-                            long newId = AppDatabase.$(getApplicationContext()).movieDao()
-                                    .insertMovie(entry);
-                            Log.d(TAG, "onClick() called: newId: " + newId);
-                            Log.d(TAG, "onClick() called; inserted movieEntry = ["+ entry +"]["+ model.getMovieEntry().getValue() +"]");
-                        }
+                // ... and then if the user has pressed the favorite, we add it to the db ...
+                if (mFavorite.isChecked()) {
+                    entry.setJson(new GsonBuilder().create().toJson(movieInfo));
+                    // @Insert is OnConflictStrategy.REPLACE so will not duplicate records,
+                    Log.d(TAG, "onClick() called; inserting movieEntry = ["+ entry +"]["+ model.getMovieEntry().getValue() +"]");
+                    long newId = AppDatabase.$(getApplicationContext()).movieDao()
+                            .insertMovie(entry);
+                    Log.d(TAG, "onClick() called: newId: " + newId);
+                    Log.d(TAG, "onClick() called; inserted movieEntry = ["+ entry +"]["+ model.getMovieEntry().getValue() +"]");
+                }
 
-                    }
-                });
-            }
+            });
         });
 
     }
@@ -251,12 +243,7 @@ public class DetailActivity
         AppUtil.setPosterToView(this, movieInfo, mPoster);
 
         // Restore the previous scroll location ...
-        mDetailScrollView.post(new Runnable() {
-            @Override
-            public void run() {
-                mDetailScrollView.scrollTo(SCROLL_X, SCROLL_Y);
-            }
-        });
+        mDetailScrollView.post(() -> mDetailScrollView.scrollTo(SCROLL_X, SCROLL_Y));
 
     }
 
@@ -280,7 +267,7 @@ public class DetailActivity
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
         Log.d(TAG, "onSaveInstanceState() called with: outState = [" + outState + "]["+
                 mDetailScrollView.getScrollX() +"]["+ mDetailScrollView.getScrollY() +"]");
         super.onSaveInstanceState(outState);
@@ -294,7 +281,7 @@ public class DetailActivity
     }
 
     @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         final int[] position = savedInstanceState.getIntArray(KEY_SCROLL_POS);
         Log.d(TAG, "onRestoreInstanceState: position: " + Arrays.toString(position));

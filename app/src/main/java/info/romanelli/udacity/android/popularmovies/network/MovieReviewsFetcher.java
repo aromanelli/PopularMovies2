@@ -1,7 +1,7 @@
 package info.romanelli.udacity.android.popularmovies.network;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.util.Log;
 
 import com.google.gson.annotations.SerializedName;
@@ -49,7 +49,6 @@ public class MovieReviewsFetcher extends AbstractFetcher {
                         @NonNull final retrofit2.Response<MovieReviewsFetcher.Response> response) {
                     Log.d(TAG, "onResponse: body: " + response.body());
                     if (response.body() != null) {
-                        //noinspection ConstantConditions
                         notifyListener(response.body().getMovieReviewsInfo());
                     }
                     else {

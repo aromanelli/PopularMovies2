@@ -1,7 +1,7 @@
 package info.romanelli.udacity.android.popularmovies.network;
 
-import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 
 import com.google.gson.annotations.SerializedName;
@@ -80,7 +80,6 @@ public class MoviesInfoFetcher extends AbstractFetcher {
                         @NonNull final retrofit2.Response<MoviesInfoFetcher.Response> response) {
                     Log.d(TAG, "onResponse: body: " + response.body());
                     if (response.body() != null) {
-                        //noinspection ConstantConditions
                         listener.fetchedMoviesInfo(response.body().getMoviesInfo());
                     } else {
                         Log.e(TAG, "onResponse: No response body was returned!");
