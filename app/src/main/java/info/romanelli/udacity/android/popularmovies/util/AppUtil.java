@@ -44,6 +44,7 @@ public class AppUtil {
                 (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         if (cm != null) {
             NetworkInfo netInfo = cm.getActiveNetworkInfo();
+            // TODO AOR Refactor below (already done in other apps so use that code)
             flag = (netInfo != null) && netInfo.isConnectedOrConnecting();
         } else {
             Log.w(TAG, "isOnline: Unable to obtain a ConnectivityManager reference! " + Thread.currentThread().getName());
@@ -86,6 +87,7 @@ public class AppUtil {
 
                     @Override
                     public void onError(Exception e) {
+                        Log.e(TAG, "ERROR! setPosterToView: Uri for poster: ["+ uri +"]", e);
                         // Null checks are because this shared code is called from both
                         // the detail activity, and the movie info RecyclerView.Adapter,
                         // but only needs to be done from detail activity, since it has
