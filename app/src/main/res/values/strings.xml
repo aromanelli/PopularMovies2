@@ -20,8 +20,8 @@
     <string name="label_trailers">Trailers:</string>
     <string name="label_reviews">Reviews:</string>
 
-    <string name="msg_offline">Offline</string>
+    <string name="msg_offline">No online connection is available</string>
 
-    <string name="msg_no_intent">No App Available To View Content</string>
+    <string name="msg_no_intent">No app available to view content</string>
 
 </resources>

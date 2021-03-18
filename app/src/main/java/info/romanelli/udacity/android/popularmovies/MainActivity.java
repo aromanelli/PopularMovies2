@@ -19,6 +19,7 @@ import info.romanelli.udacity.android.popularmovies.network.MovieInfo;
 import info.romanelli.udacity.android.popularmovies.network.MoviesInfoFetcher;
 import info.romanelli.udacity.android.popularmovies.util.AppUtil;
 import info.romanelli.udacity.android.popularmovies.util.MovieInfoAdapter;
+import info.romanelli.udacity.android.popularmovies.util.NetUtil;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -55,7 +56,11 @@ public class MainActivity
         mAdapterMovieInfo = new MovieInfoAdapter(this);
         binding.fullscreenContent.setAdapter(mAdapterMovieInfo);
 
-        fetchMoviesInfo(savedInstanceState);
+        NetUtil.registerForNetworkMonitoring(this);
+
+        if (NetUtil.ifConnected(this.findViewById(R.id.fullscreen_content))) {
+            fetchMoviesInfo(savedInstanceState);
+        }
     }
 
     private void fetchMoviesInfo(final Bundle savedInstanceState) {
@@ -85,7 +90,7 @@ public class MainActivity
     @Override
     public void onMovieClick(final MovieInfo movieInfo, final ImageView ivPoster) {
 
-        if (!AppUtil.ifOnline(this)) {
+        if (!NetUtil.ifConnected(this.findViewById(R.id.fullscreen_content))) {
             // finish();
             return;
         }
@@ -143,26 +148,27 @@ public class MainActivity
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
-        switch (item.getItemId()) {
-            case R.id.menu_top_rated:
-                if (AppUtil.ifOnline(this)) {
-                    typeMoviesList = MoviesInfoFetcher.MoviesInfoType.TOP_RATED;
-                    MoviesInfoFetcher.fetchMoviesInfo(this, this, typeMoviesList);
-                }
-                break;
-            case R.id.menu_popular:
-                if (AppUtil.ifOnline(this)) {
-                    typeMoviesList = MoviesInfoFetcher.MoviesInfoType.POPULAR;
-                    MoviesInfoFetcher.fetchMoviesInfo(this, this, typeMoviesList);
-                }
-                break;
-            case R.id.menu_favorites:
-                typeMoviesList = MoviesInfoFetcher.MoviesInfoType.FAVORITES;
+        // https://sites.google.com/a/android.com/tools/tips/non-constant-fields
+        int id = item.getItemId();
+        if (id == R.id.menu_favorites) {
+            typeMoviesList = MoviesInfoFetcher.MoviesInfoType.FAVORITES;
+            MoviesInfoFetcher.fetchMoviesInfo(this, this, typeMoviesList);
+        }
+        else if (id == R.id.menu_popular) {
+            if (NetUtil.ifConnected(this.findViewById(R.id.fullscreen_content))) {
+                typeMoviesList = MoviesInfoFetcher.MoviesInfoType.POPULAR;
                 MoviesInfoFetcher.fetchMoviesInfo(this, this, typeMoviesList);
-                break;
-            default:
-                Log.e(TAG, "onOptionsItemSelected: Unknown options item id! [" + item.getItemId() + "]");
-                return true; // consume, don't continue
+            }
+        }
+        else if (id == R.id.menu_top_rated) {
+            if (NetUtil.ifConnected(this.findViewById(R.id.fullscreen_content))) {
+                typeMoviesList = MoviesInfoFetcher.MoviesInfoType.TOP_RATED;
+                MoviesInfoFetcher.fetchMoviesInfo(this, this, typeMoviesList);
+            }
+        }
+        else {
+            Log.e(TAG, "onOptionsItemSelected: Unknown options item id! [" + item.getItemId() + "]");
+            return true; // consume, don't continue
         }
         Log.d(TAG, "onOptionsItemSelected: typeMoviesList set to --> " + typeMoviesList);
 

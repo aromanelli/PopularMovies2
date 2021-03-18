@@ -1,8 +1,9 @@
 package info.romanelli.udacity.android.popularmovies.network;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import android.util.Log;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -10,8 +11,8 @@ import java.net.URL;
 import java.util.ArrayList;
 
 import info.romanelli.udacity.android.popularmovies.BuildConfig;
-import info.romanelli.udacity.android.popularmovies.util.AppUtil;
 import info.romanelli.udacity.android.popularmovies.util.FavMoviesObserver;
+import info.romanelli.udacity.android.popularmovies.util.NetUtil;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.http.GET;
@@ -58,7 +59,7 @@ public class MoviesInfoFetcher extends AbstractFetcher {
         // Need to call out to the Internet ...
         ///////////////////////////////////////
 
-        if (AppUtil.isOnline(activity)) {
+        if (NetUtil.isConnected()) {
             Log.d(TAG, "fetchMoviesInfo(): Online; starting Retrofit process for list type [" +
                     moviesInfoType + "] ...");
 
@@ -127,7 +128,6 @@ public class MoviesInfoFetcher extends AbstractFetcher {
     }
 
     static class Response {
-        @SuppressWarnings("unused")
         @SerializedName("results") // Name of attrib in json
         private ArrayList<MovieInfo> listResults;
         /** @return An {@link ArrayList} of {@link MovieInfo} objects, or {@code null}. */

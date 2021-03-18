@@ -1,15 +1,16 @@
 package info.romanelli.udacity.android.popularmovies.network;
 
 import android.content.Context;
-import androidx.annotation.NonNull;
 import android.util.Log;
+
+import androidx.annotation.NonNull;
 
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 
 import info.romanelli.udacity.android.popularmovies.BuildConfig;
-import info.romanelli.udacity.android.popularmovies.util.AppUtil;
+import info.romanelli.udacity.android.popularmovies.util.NetUtil;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.http.GET;
@@ -27,7 +28,7 @@ public class MovieVideosFetcher extends AbstractFetcher {
         Log.d(TAG, "fetchMovieVideosInfo() called with: context = [" + context + "], listener = [" +
                 listener + "]");
 
-        if (AppUtil.isOnline(context)) {
+        if (NetUtil.isConnected()) {
             Log.d(TAG, "fetchMovieVideosInfo(): Online; starting Retrofit process...");
 
             // Call instance can be exec'd only once!
@@ -90,7 +91,6 @@ public class MovieVideosFetcher extends AbstractFetcher {
     }
 
     static class Response {
-        @SuppressWarnings("unused")
         @SerializedName("results") // Name of attrib in json
         private ArrayList<MovieVideosInfo> listResults;
         /** @return An {@link ArrayList} of {@link MovieVideosInfo} objects, or {@code null}. */

@@ -7,7 +7,7 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.google.gson.GsonBuilder;
@@ -29,6 +29,7 @@ import info.romanelli.udacity.android.popularmovies.util.AppDatabase;
 import info.romanelli.udacity.android.popularmovies.util.AppExecutors;
 import info.romanelli.udacity.android.popularmovies.util.AppUtil;
 import info.romanelli.udacity.android.popularmovies.util.MovieDetailsAdapter;
+import info.romanelli.udacity.android.popularmovies.util.NetUtil;
 
 public class DetailActivity
         extends
@@ -55,7 +56,9 @@ public class DetailActivity
 
         super.onCreate(savedInstanceState);
 
-        if (!AppUtil.ifOnline(this)) {
+        NetUtil.registerForNetworkMonitoring(this);
+
+        if (!NetUtil.ifConnected(this.findViewById(R.id.rvVidsAndReviews))) {
             // finish();
             return;
         }
@@ -112,7 +115,7 @@ public class DetailActivity
         binding.tvPlotSynopsis.setText(movieInfo.getOverview());
 
         // Set the favorites flag, as well as its click listener ...
-        final MovieModel model = ViewModelProviders.of(
+        final MovieModel model = new ViewModelProvider(
                 DetailActivity.this,
                 new MovieModelFactory(
                         AppDatabase.$(getApplicationContext()),
